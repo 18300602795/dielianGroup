@@ -29,6 +29,7 @@ android {
                     ]
         }
     }
+    buildToolsVersion '26.0.2'
 }
 
 dependencies {
@@ -55,7 +56,9 @@ dependencies {
         exclude module: "appcompat"
     }
     //activity右滑关闭控件
+
     //下滑关闭组件库
+
     //    compile project(':sdkNative')
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'com.liulishuo.filedownloader:library:1.4.0'
@@ -67,11 +70,13 @@ dependencies {
     compile 'com.sothree.slidinguppanel:library:3.3.1'
     compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:1.3.4'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
+    compile 'com.jcodecraeer:xrecyclerview:1.3.2'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     compile project(':jcvideoplayer-lib')
     compile files('share_libs/MobCommons-2017.1201.1507.jar')
     dependencies { compile 'com.android.support:multidex:1.0.1' }
+    compile project(':baseadapter-recyclerview')
 }
 //apply plugin: 'AndResGuard'
 apply plugin: 'com.antfortune.freeline'

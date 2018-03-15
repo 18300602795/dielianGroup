@@ -53,7 +53,7 @@ public class BackRecordAadapter extends RecyclerView.Adapter implements IDataAda
                 break;
             case "3":
                 ((GameListViewHolder) holder).tvPayType.setText("审核失败");
-                ((GameListViewHolder) holder).tvPayType.setBackgroundResource(R.drawable.back_state_fause);
+                ((GameListViewHolder) holder).tvPayType.setBackgroundResource(R.drawable.back_state_false);
                 break;
         }
 //        GlideDisplay.display(((GameListViewHolder) holder).iv_game_img, listBeen.get(position).getGame_icon(), R.mipmap.ic_launcher);

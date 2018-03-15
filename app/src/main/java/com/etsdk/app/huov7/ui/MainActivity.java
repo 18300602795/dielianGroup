@@ -227,7 +227,7 @@ public class MainActivity extends ImmerseActivity {
     }
 
     public static void start(Context context, int position) {
-        Intent starter = new Intent(context, MainActivity.class);
+        Intent starter = new Intent(context, MainActivity2.class);
         starter.putExtra("position", position);
         context.startActivity(starter);
     }

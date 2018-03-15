@@ -29,11 +29,13 @@ import com.game.sdk.listener.OnInitSdkListener;
 import com.game.sdk.util.GsonUtil;
 import com.kymjs.rxvolley.RxVolley;
 import com.kymjs.rxvolley.client.HttpParams;
+import com.kymjs.rxvolley.http.VolleyError;
 import com.liang530.control.LoginControl;
 import com.liang530.log.T;
 import com.liang530.photopicker.beans.SelectPhotoEvent;
 import com.liang530.rxvolley.HttpJsonCallBackDialog;
 import com.liang530.rxvolley.NetRequest;
+import com.liang530.utils.GlideDisplay;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -137,8 +139,8 @@ public class AccountManageActivity extends ImmerseActivity {
             errorImage = R.mipmap.touxiang;
         }
         tvNickName.setText(userInfoResultBean.getNickname());
-//        GlideDisplay.display(ivMineHead, userInfoResultBean.getPortrait(), errorImage);
-        Glide.with(AccountManageActivity.this).load(userInfoResultBean.getPortrait()).into(ivMineHead);
+        GlideDisplay.display(ivMineHead, userInfoResultBean.getPortrait(), errorImage);
+//        Glide.with(mContext).load(userInfoResultBean.getPortrait()).placeholder(errorImage).into(ivMineHead);
         if (TextUtils.isEmpty(userInfoResultBean.getMobile())) {
             tvBindMobile.setText("未设置");
             tvPhoneStatus.setText("绑定手机号");
@@ -236,10 +238,23 @@ public class AccountManageActivity extends ImmerseActivity {
         HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.userHeadImgApi);
         httpParams.put("portrait", file);
         //成功，失败，null数据
-        NetRequest.request(this).setParams(httpParams).post(AppApi.getUrl(AppApi.userHeadImgApi), new HttpJsonCallBackDialog<AddressList>() {
+//        NetRequest.request(this).setParams(httpParams).post(AppApi.getUrl(AppApi.userHeadImgApi), new HttpJsonCallBackDialog<AddressList>() {
+//            @Override
+//            public void onDataSuccess(AddressList data) {
+//                T.s(mContext, "上传成功");
+//            }
+//        });
+
+        NetRequest.request(this).setParams(httpParams).post("https://api.idielian.com/api/v7/bbs/list", new HttpJsonCallBackDialog<AddressList>() {
             @Override
             public void onDataSuccess(AddressList data) {
                 T.s(mContext, "上传成功");
+            }
+
+            @Override
+            public void onFailure(VolleyError error) {
+                super.onFailure(error);
+                T.s(mContext, "上传失败：" + error.toString());
             }
         });
     }

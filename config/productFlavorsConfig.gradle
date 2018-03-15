@@ -1,10 +1,10 @@
 android {
 	 productFlavors {
 	 	 "dielian249" {
-	 	 	 applicationId "com.dielian249.huosuapp"
+	 	 	 applicationId "com.dieliangroup"
 	 	 	 versionCode 302
 	 	 	 versionName "1.1.4"
-	 	 	 resValue( "string", "app_name", "纷享游戏" )
+	 	 	 resValue( "string", "app_name", "蝶恋公会" )
 	 	 	 resValue( "string", "accessibility_service_name", "纷享游戏自动安装" )
 	 	 	 buildConfigField( "int", "projectCode", "249" )
 	 	 	 buildConfigField("String", "USE_URL", '"1"')

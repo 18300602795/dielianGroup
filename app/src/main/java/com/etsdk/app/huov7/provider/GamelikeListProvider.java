@@ -23,8 +23,6 @@ import me.drakeet.multitype.ItemViewProvider;
 public class GamelikeListProvider
         extends ItemViewProvider<GamelikeBean, GamelikeListProvider.ViewHolder> {
 
-
-
     @NonNull
     @Override
     protected ViewHolder onCreateViewHolder(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {

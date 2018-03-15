@@ -47,9 +47,15 @@ ext {
                         }
                     }
                 }
+
+//                android.applicationVariants.all { variant ->
+//                    variant.outputs.all {
+//                        outputFileName = "${variant.productFlavors[0].name}_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
+//                    }
+//                }
             }
         }
-        //签名信息
+//        //签名信息
         signingConfigs {
             debug {
                 storeFile file("key/huoapp_key.jks")
