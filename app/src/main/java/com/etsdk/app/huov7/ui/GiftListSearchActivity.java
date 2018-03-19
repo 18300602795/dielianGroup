@@ -43,7 +43,6 @@ import me.drakeet.multitype.MultiTypeAdapter;
 
 
 public class GiftListSearchActivity extends ImmerseActivity implements AdvRefreshListener {
-
     @BindView(R.id.iv_gotoMsg)
     ImageView ivGotoMsg;
     @BindView(R.id.iv_titleLeft)

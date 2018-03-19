@@ -275,6 +275,15 @@ public class FuliGiftActivity extends ImmerseActivity implements AdvRefreshListe
 //        context.startActivity(starter);
     }
 
+    public static void start(Context context, String gameId) {
+        //福利礼包改为显示全部礼包
+
+        GiftListActivity.start(context,"福利礼包",gameId,0,0,0,0);
+
+//        Intent starter = new Intent(context, FuliGiftActivity.class);
+//        context.startActivity(starter);
+    }
+
     @OnClick({R.id.iv_titleLeft, R.id.tv_titleRight})
     public void onClick(View view) {
         switch (view.getId()) {

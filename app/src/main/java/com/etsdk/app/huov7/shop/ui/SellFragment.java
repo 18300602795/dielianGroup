@@ -347,7 +347,7 @@ public class SellFragment extends AutoLazyFragment {
             T.s(mContext, "至少上传3张截图");
             return;
         }
-        float income = price*0.03f<=3?(price-3f):(price*0.97f);
+        float income = price * 0.03f <= 3 ? (price - 3f) : (price * 0.97f);
         new SellHintDialogUtil().show(getContext(), income, data.getMobile(), mode, new SellHintDialogUtil.Listener() {
             @Override
             public void ok(String code) {
@@ -361,6 +361,32 @@ public class SellFragment extends AutoLazyFragment {
             @Override
             public void cancel() {
 
+            }
+        });
+    }
+
+    private void edit2() {
+        T.s(mContext, "开始上传图片");
+        HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.dealAccountEdit);
+        int i = 1;
+        for (String path : imagebox.getAllImages()) {//耗时操作
+            httpParams.put("image[]", new File(path));
+            i++;
+        }
+        NetRequest.request(this).setParams(httpParams).showDialog(true).post("https://api.idielian.com/api/v7/bbs/list", new HttpJsonCallBackDialog<ResultBean>() {
+            @Override
+            public void onDataSuccess(ResultBean data) {
+                if (data.getCode() == 200) {
+                    T.s(mContext, "发布成功，请耐心等待审核通过");
+                    EventBus.getDefault().post(new ShopListRefreshEvent());
+                } else {
+                    T.s(mContext, "提交失败 " + data.getMsg());
+                }
+            }
+
+            @Override
+            public void onFailure(int errorNo, String strMsg, String completionInfo) {
+                T.s(mContext, "提交失败 " + strMsg);
             }
         });
     }
@@ -473,6 +499,7 @@ public class SellFragment extends AutoLazyFragment {
                 MyAccountListActivity.start(mContext, gameId);
                 break;
             case R.id.tv_commit:
+//                edit2();
                 getUserInfoBeforePublish();
                 break;
             case R.id.tv_service_center:

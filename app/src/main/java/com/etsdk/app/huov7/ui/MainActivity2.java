@@ -1,15 +1,14 @@
 package com.etsdk.app.huov7.ui;
 
-import android.animation.ObjectAnimator;
-import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,13 +16,19 @@ import android.widget.Toast;
 import com.etsdk.app.huov7.R;
 import com.etsdk.app.huov7.adapter.GroupHomeAdapter;
 import com.etsdk.app.huov7.base.ImmerseActivity;
+import com.etsdk.app.huov7.model.StartupResultBean;
 import com.etsdk.app.huov7.ui.fragment.GuildFragment;
+import com.etsdk.app.huov7.ui.fragment.MineFragment;
 import com.etsdk.app.huov7.ui.fragment.NewsListFragment;
-import com.etsdk.app.huov7.util.StringUtils;
-import com.etsdk.app.huov7.view.StickyNavLayout;
+import com.etsdk.app.huov7.update.UpdateVersionDialog;
+import com.etsdk.app.huov7.update.UpdateVersionService;
 import com.game.sdk.log.L;
 import com.jaeger.library.StatusBarUtil;
 import com.jude.swipbackhelper.SwipeBackHelper;
+import com.liang530.log.T;
+import com.liang530.views.imageview.roundedimageview.RoundedImageView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +42,12 @@ import butterknife.OnClick;
  */
 
 public class MainActivity2 extends ImmerseActivity {
-    @BindView(R.id.sticky)
-    StickyNavLayout sticky;
+    //    @BindView(R.id.sticky)
+//    StickyNavLayout sticky;
     @BindView(R.id.id_stickynavlayout_viewpager)
     ViewPager mViewPager;
     @BindView(R.id.group_icon)
-    ImageView group_icon;
+    RoundedImageView group_icon;
     @BindView(R.id.group_name)
     TextView group_name;
     @BindView(R.id.group_introduce)
@@ -90,7 +95,7 @@ public class MainActivity2 extends ImmerseActivity {
             setTranslucentStatus(true);
 
         }
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_main3);
         ButterKnife.bind(this);
         SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
         initDate();
@@ -120,8 +125,55 @@ public class MainActivity2 extends ImmerseActivity {
         win.setAttributes(winParams);
     }
 
+    /**
+     * 处理版本更新信息
+     */
+    private void handleUpdate() {
+        final boolean showCancel;
+        final StartupResultBean.UpdateInfo updateInfo = EventBus.getDefault().getStickyEvent(StartupResultBean.UpdateInfo.class);
+        if (updateInfo != null) {//有更新
+            if ("1".equals(updateInfo.getUp_status())) {//强制更新
+                showCancel = false;
+            } else if ("2".equals(updateInfo.getUp_status())) {//选择更新
+                showCancel = true;
+            } else {
+                return;
+            }
+            if (TextUtils.isEmpty(updateInfo.getUrl()) ||
+                    (!updateInfo.getUrl().startsWith("http") && !updateInfo.getUrl().startsWith("https"))) {
+                return;//url不可用
+            }
+            new UpdateVersionDialog().showDialog(mContext, showCancel, updateInfo.getContent(), new UpdateVersionDialog.ConfirmDialogListener() {
+                @Override
+                public void ok() {
+                    Intent intent = new Intent(mContext, UpdateVersionService.class);
+                    intent.putExtra("url", updateInfo.getUrl());
+                    mContext.startService(intent);
+                    T.s(mContext, "开始下载,请在下载完成后确认安装！");
+                    if (!showCancel) {//是强更则关闭界面
+                        finish();
+                    }
+                }
+
+                @Override
+                public void cancel() {
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (fragmentList != null && fragmentList.size() >= 5) {
+            if (fragmentList.get(4) != null) {
+                ((MineFragment) fragmentList.get(4)).updateData();
+            }
+        }
+    }
 
     private void initDate() {
+        handleUpdate();
         views = new ArrayList<>();
         views.add(group_bg);
         views.add(house_bg);
@@ -135,10 +187,10 @@ public class MainActivity2 extends ImmerseActivity {
         textViews.add(event_tv);
         textViews.add(mine_tv);
         fragmentList.add(new GuildFragment());
-        fragmentList.add(NewsListFragment.newInstance("2", null));
-        fragmentList.add(NewsListFragment.newInstance("3", null));
         fragmentList.add(NewsListFragment.newInstance("5", null));
-        fragmentList.add(NewsListFragment.newInstance("1", null));
+        fragmentList.add(NewsListFragment.newInstance("3", null));
+        fragmentList.add(NewsListFragment.newInstance("2", null));
+        fragmentList.add(new MineFragment());
         mAdapter = new GroupHomeAdapter(getSupportFragmentManager(), fragmentList);
         clear();
         show(0);
@@ -161,39 +213,45 @@ public class MainActivity2 extends ImmerseActivity {
 
             }
         });
-        sticky.setStickyCallBack(new StickyNavLayout.StickyCallBack() {
-            @Override
-            public void move(int dy) {
-                if (dy > (StringUtils.dip2px(mContext, 100))) {
-                    dy = (StringUtils.dip2px(mContext, 100));
-                }
-                float scale;
-                if (dy != 0) {
-                    scale = (float) ((StringUtils.dip2px(mContext, 100)) - dy / 4) / (float) (StringUtils.dip2px(mContext, 100));
-                } else {
-                    scale = 1;
-                }
-                WindowManager wm = (WindowManager) mContext
-                        .getSystemService(Context.WINDOW_SERVICE);
-                int width = wm.getDefaultDisplay().getWidth();
-                float icon_width = ((float) dy / StringUtils.dip2px(mContext, 100)) * (width / 2 - StringUtils.dip2px(mContext, 40));
-                ObjectAnimator.ofFloat(group_icon, "scaleX", scale).setDuration(0).start();
-                ObjectAnimator.ofFloat(group_icon, "scaleY", scale).setDuration(0).start();
-                ObjectAnimator.ofFloat(group_icon, "translationY", dy / 4 * 3).setDuration(0).start();
-                ObjectAnimator.ofFloat(group_icon, "translationX", -icon_width).setDuration(0).start();
-                float name_width = ((float) dy / StringUtils.dip2px(mContext, 100)) * (width / 2 - StringUtils.dip2px(mContext, 110));
-                ObjectAnimator.ofFloat(group_name, "translationY", dy / 8).setDuration(0).start();
-                ObjectAnimator.ofFloat(group_name, "translationX", -name_width).setDuration(0).start();
-                float introduce_width = ((float) dy / StringUtils.dip2px(mContext, 100)) * (width / 2 - StringUtils.dip2px(mContext, 160));
-                ObjectAnimator.ofFloat(group_introduce, "translationY", dy / 8).setDuration(0).start();
-                ObjectAnimator.ofFloat(group_introduce, "translationX", -introduce_width).setDuration(0).start();
-            }
-        });
+//        sticky.setStickyCallBack(new StickyNavLayout.StickyCallBack() {
+//            @Override
+//            public void move(int dy) {
+//                if (dy > (StringUtils.dip2px(mContext, 100))) {
+//                    dy = (StringUtils.dip2px(mContext, 100));
+//                }
+//                float scale;
+//                if (dy != 0) {
+//                    scale = (float) ((StringUtils.dip2px(mContext, 100)) - dy / 4) / (float) (StringUtils.dip2px(mContext, 100));
+//                } else {
+//                    scale = 1;
+//                }
+//                WindowManager wm = (WindowManager) mContext
+//                        .getSystemService(Context.WINDOW_SERVICE);
+//                int width = wm.getDefaultDisplay().getWidth();
+//                float icon_width = ((float) dy / StringUtils.dip2px(mContext, 100)) * (width / 2 - StringUtils.dip2px(mContext, 40));
+//                ObjectAnimator.ofFloat(group_icon, "scaleX", scale).setDuration(0).start();
+//                ObjectAnimator.ofFloat(group_icon, "scaleY", scale).setDuration(0).start();
+//                ObjectAnimator.ofFloat(group_icon, "translationY", dy / 4 * 3).setDuration(0).start();
+//                ObjectAnimator.ofFloat(group_icon, "translationX", -icon_width).setDuration(0).start();
+//                float name_width = ((float) dy / StringUtils.dip2px(mContext, 100)) * (width / 2 - StringUtils.dip2px(mContext, 110));
+//                ObjectAnimator.ofFloat(group_name, "translationY", dy / 8).setDuration(0).start();
+//                ObjectAnimator.ofFloat(group_name, "translationX", -name_width).setDuration(0).start();
+//                float introduce_width = ((float) dy / StringUtils.dip2px(mContext, 100)) * (width / 2 - StringUtils.dip2px(mContext, 160));
+//                ObjectAnimator.ofFloat(group_introduce, "translationY", dy / 8).setDuration(0).start();
+//                ObjectAnimator.ofFloat(group_introduce, "translationX", -introduce_width).setDuration(0).start();
+//            }
+//        });
     }
 
-    @OnClick({R.id.group_ll, R.id.event_ll, R.id.chat_ll, R.id.house_ll, R.id.mine_ll})
+    @OnClick({R.id.search_iv, R.id.down_iv, R.id.group_ll, R.id.event_ll, R.id.chat_ll, R.id.house_ll, R.id.mine_ll})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.search_iv:
+                SearchActivity.start(mContext);
+                break;
+            case R.id.down_iv:
+                DownloadManagerActivity.start(mContext);
+                break;
             case R.id.group_ll:
                 clear();
                 show(0);

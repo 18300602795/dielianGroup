@@ -6,17 +6,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.etsdk.app.huov7.ui.GiftListActivity">
-    <include layout="@layout/include_title_gift_search"/>
+
+    <include layout="@layout/include_title_gift_search" />
+
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swrefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
+
     <com.etsdk.app.huov7.view.GameGiftSearchView
         android:id="@+id/gameGiftSearchView"
         android:layout_width="match_parent"

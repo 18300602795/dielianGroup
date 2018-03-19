@@ -1,7 +1,6 @@
 package com.etsdk.app.huov7.ui.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,7 +29,6 @@ import com.etsdk.app.huov7.ui.dialog.CouponExchangeDialogUtil;
 import com.game.sdk.domain.BaseRequestBean;
 import com.game.sdk.http.HttpNoLoginCallbackDecode;
 import com.game.sdk.http.HttpParamsBuild;
-import com.game.sdk.log.L;
 import com.game.sdk.util.GsonUtil;
 import com.kymjs.rxvolley.RxVolley;
 import com.liang530.control.LoginControl;
@@ -81,7 +79,7 @@ public class MainMineFragmentNew2 extends AutoLazyFragment {
         super.onCreateViewLazy(savedInstanceState);
         setContentView(R.layout.fragment_main_mine_new2);
         EventBus.getDefault().register(this);
-        EventBus.getDefault().post(new ShowMsg(true));
+//        EventBus.getDefault().post(new ShowMsg(true));
         setupUI();
     }
 
@@ -149,7 +147,6 @@ public class MainMineFragmentNew2 extends AutoLazyFragment {
      */
     public void updateData() {
         getUserInfoData();
-//        getData();
     }
 
     public void getUserInfoData() {
@@ -178,29 +175,6 @@ public class MainMineFragmentNew2 extends AutoLazyFragment {
         httpCallbackDecode.setShowLoading(false);
         RxVolley.post(AppApi.getUrl(AppApi.userDetailApi), httpParamsBuild.getHttpParams(), httpCallbackDecode);
     }
-
-    public void getData() {
-        L.i("333", "获取数据：https://api.idielian.com/api/v7/Bbs/list");
-        bindPhoneClickable = false;
-        final BaseRequestBean baseRequestBean = new BaseRequestBean();
-        HttpParamsBuild httpParamsBuild = new HttpParamsBuild(GsonUtil.getGson().toJson(baseRequestBean));
-        HttpNoLoginCallbackDecode httpCallbackDecode = new HttpNoLoginCallbackDecode<UserInfoResultBean>(getActivity(), httpParamsBuild.getAuthkey()) {
-            @Override
-            public void onDataSuccess(UserInfoResultBean data) {
-
-            }
-
-            @Override
-            public void onFailure(String code, String msg) {
-                Log.i("333", "msg：" + msg);
-            }
-        };
-        httpCallbackDecode.setShowTs(true);
-        httpCallbackDecode.setLoadingCancel(false);
-        httpCallbackDecode.setShowLoading(false);
-        RxVolley.post("https://api.idielian.com/api/v7/bbs/list", httpParamsBuild.getHttpParams(), httpCallbackDecode);
-    }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMsgShow(ShowMsg showMsg) {

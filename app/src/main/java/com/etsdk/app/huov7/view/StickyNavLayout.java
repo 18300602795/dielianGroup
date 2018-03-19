@@ -70,11 +70,11 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
             final int childAdapterPosition = recyclerView.getChildAdapterPosition(firstChild);
             consumed = childAdapterPosition > TOP_CHILD_FLING_THRESHOLD;
         }
-//        if (!consumed) {
-//            animateScroll(velocityY, computeDuration(0),consumed);
-//        } else {
-//            animateScroll(velocityY, computeDuration(velocityY),consumed);
-//        }
+        if (!consumed) {
+            animateScroll(velocityY, computeDuration(0),consumed);
+        } else {
+            animateScroll(velocityY, computeDuration(velocityY),consumed);
+        }
         return true;
     }
 

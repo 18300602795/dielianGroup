@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,8 +25,10 @@ import com.etsdk.app.huov7.ui.dialog.UpdateTextDialogUtil;
 import com.game.sdk.HuosdkManager;
 import com.game.sdk.domain.BaseRequestBean;
 import com.game.sdk.http.HttpCallbackDecode;
+import com.game.sdk.http.HttpNoLoginCallbackDecode;
 import com.game.sdk.http.HttpParamsBuild;
 import com.game.sdk.listener.OnInitSdkListener;
+import com.game.sdk.log.L;
 import com.game.sdk.util.GsonUtil;
 import com.kymjs.rxvolley.RxVolley;
 import com.kymjs.rxvolley.client.HttpParams;
@@ -88,6 +91,8 @@ public class AccountManageActivity extends ImmerseActivity {
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         setupUI();
+        updateHeadImage();
+        getData();
 
     }
 
@@ -111,6 +116,7 @@ public class AccountManageActivity extends ImmerseActivity {
         Intent starter = new Intent(context, AccountManageActivity.class);
         context.startActivity(starter);
     }
+
     public static Intent getIntent(Context context) {
         Intent starter = new Intent(context, AccountManageActivity.class);
         return starter;
@@ -163,9 +169,9 @@ public class AccountManageActivity extends ImmerseActivity {
                 finish();
                 break;
             case R.id.ll_bind_phone:
-                if(tvPhoneStatus.getTag()!=null&&(int)tvPhoneStatus.getTag()==1){
-                    AuthPhoneActivity.start(mContext,tvBindMobile.getText().toString());
-                }else{
+                if (tvPhoneStatus.getTag() != null && (int) tvPhoneStatus.getTag() == 1) {
+                    AuthPhoneActivity.start(mContext, tvBindMobile.getText().toString());
+                } else {
                     BindPhoneActivity.start(mContext);
                 }
                 break;
@@ -195,13 +201,15 @@ public class AccountManageActivity extends ImmerseActivity {
                 break;
         }
     }
-    private void logout(){
-        BaseRequestBean baseRequestBean=new BaseRequestBean();
-        HttpParamsBuild httpParamsBuild=new HttpParamsBuild(GsonUtil.getGson().toJson(baseRequestBean));
+
+    private void logout() {
+        BaseRequestBean baseRequestBean = new BaseRequestBean();
+        HttpParamsBuild httpParamsBuild = new HttpParamsBuild(GsonUtil.getGson().toJson(baseRequestBean));
         HttpCallbackDecode httpCallbackDecode = new HttpCallbackDecode<BaseRequestBean>(mContext, httpParamsBuild.getAuthkey()) {
             @Override
             public void onDataSuccess(BaseRequestBean data) {
             }
+
             @Override
             public void onFailure(String code, String msg) {
             }
@@ -209,7 +217,7 @@ public class AccountManageActivity extends ImmerseActivity {
         httpCallbackDecode.setShowTs(false);
         httpCallbackDecode.setLoadingCancel(false);
         httpCallbackDecode.setShowLoading(false);
-        RxVolley.post(AppApi.getUrl(AppApi.logoutApi), httpParamsBuild.getHttpParams(),httpCallbackDecode);
+        RxVolley.post(AppApi.getUrl(AppApi.logoutApi), httpParamsBuild.getHttpParams(), httpCallbackDecode);
         LoginControl.clearLogin();
         LoginActivity.start(mActivity);
         finish();
@@ -258,6 +266,45 @@ public class AccountManageActivity extends ImmerseActivity {
             }
         });
     }
+    public void getData() {
+        L.i("333", "获取数据：https://api.idielian.com/api/v7/bbs/list");
+        final BaseRequestBean baseRequestBean = new BaseRequestBean();
+        HttpParamsBuild httpParamsBuild = new HttpParamsBuild(GsonUtil.getGson().toJson(baseRequestBean));
+        HttpNoLoginCallbackDecode httpCallbackDecode = new HttpNoLoginCallbackDecode<UserInfoResultBean>(mContext, httpParamsBuild.getAuthkey()) {
+            @Override
+            public void onDataSuccess(UserInfoResultBean data) {
+
+            }
+
+            @Override
+            public void onFailure(String code, String msg) {
+                Log.i("333", "msg：" + msg);
+            }
+        };
+        httpCallbackDecode.setShowTs(true);
+        httpCallbackDecode.setLoadingCancel(false);
+        httpCallbackDecode.setShowLoading(false);
+        RxVolley.post("https://api.idielian.com/api/v7/bbs/list", httpParamsBuild.getHttpParams(), httpCallbackDecode);
+    }
+
+
+    private void updateHeadImage() {
+        HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.userHeadImgApi);
+
+        NetRequest.request(this).setParams(httpParams).post("https://api.idielian.com/api/v7/bbs/list", new HttpJsonCallBackDialog<AddressList>() {
+            @Override
+            public void onDataSuccess(AddressList data) {
+                T.s(mContext, "上传成功");
+            }
+
+            @Override
+            public void onFailure(VolleyError error) {
+                super.onFailure(error);
+                T.s(mContext, "上传失败：" + error.toString());
+            }
+        });
+    }
+
 
     private void updateNickName() {
         updateTextDialogUtil.showExchangeDialog(mContext, "昵称修改", tvNickName.getTag().toString(), new UpdateTextDialogUtil.UpdateTextDialogListener() {
