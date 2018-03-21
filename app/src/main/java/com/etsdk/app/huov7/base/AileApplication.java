@@ -37,6 +37,7 @@ public class AileApplication extends BaseApplication {
         L.i("333", "imei：" + imei);
     }
 
+
     @Override
     public Class getLoginClass() {
         return null;

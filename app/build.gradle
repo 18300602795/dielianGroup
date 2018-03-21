@@ -11,7 +11,7 @@ android {
         signingConfig signingConfigs.debug
     }
 
-    lintOptions{
+    lintOptions {
         checkReleaseBuilds false
         abortOnError false
     }
@@ -29,7 +29,8 @@ android {
                     ]
         }
     }
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '27'
 }
 
 dependencies {
@@ -60,6 +61,8 @@ dependencies {
     //下滑关闭组件库
 
     //    compile project(':sdkNative')
+    compile 'com.android.support:multidex:1.0.0'
+    compile 'com.android.support:support-v4:23.4.0'
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'com.liulishuo.filedownloader:library:1.4.0'
     compile 'com.android.support:design:24.2.1'
@@ -77,6 +80,8 @@ dependencies {
     compile files('share_libs/MobCommons-2017.1201.1507.jar')
     dependencies { compile 'com.android.support:multidex:1.0.1' }
     compile project(':baseadapter-recyclerview')
+    compile project(':multi-image-selector')
+    compile files('libs/jcore-android-1.1.9.jar')
 }
 //apply plugin: 'AndResGuard'
 apply plugin: 'com.antfortune.freeline'

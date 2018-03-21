@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/head_img"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/syicon" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/name_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="剑语公会小秘书"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:id="@+id/read_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:background="@drawable/owner_bg"
+                        android:paddingBottom="3dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingTop="3dp"
+                        android:text="楼主"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tower_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="第一楼"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/time_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:text="3天前"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:text="7阅读"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="元宵节快乐！"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/cont_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="听说热热的汤圆和新鲜的表情包更配哦！"
+            android:textSize="12sp" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/img_recycle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/praise_bg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:background="@drawable/like_bg_normal"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/praise_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/unpraise_1215" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/like_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/praise_1215" />
+
+            <TextView
+                android:id="@+id/like_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text=""
+                android:textColor="@color/blue" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:background="@color/line_gray" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:text="用户评论"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

@@ -324,6 +324,30 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
+        <!--评论详情 !-->
+        <activity
+            android:name=".ui.CommentActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <!--发表评论 !-->
+        <activity
+            android:name=".ui.PostedActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <!--回复评论 !-->
+        <activity
+            android:name=".ui.ReplyActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <!--图片预览 !-->
+        <activity
+            android:name=".ui.ShowImageActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name="com.etsdk.app.huov7.ui.ForgetPwdActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

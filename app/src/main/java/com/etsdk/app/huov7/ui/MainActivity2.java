@@ -18,6 +18,7 @@ import com.etsdk.app.huov7.adapter.GroupHomeAdapter;
 import com.etsdk.app.huov7.base.ImmerseActivity;
 import com.etsdk.app.huov7.model.StartupResultBean;
 import com.etsdk.app.huov7.ui.fragment.GuildFragment;
+import com.etsdk.app.huov7.ui.fragment.HouseFragment;
 import com.etsdk.app.huov7.ui.fragment.MineFragment;
 import com.etsdk.app.huov7.ui.fragment.NewsListFragment;
 import com.etsdk.app.huov7.update.UpdateVersionDialog;
@@ -187,7 +188,7 @@ public class MainActivity2 extends ImmerseActivity {
         textViews.add(event_tv);
         textViews.add(mine_tv);
         fragmentList.add(new GuildFragment());
-        fragmentList.add(NewsListFragment.newInstance("5", null));
+        fragmentList.add(new HouseFragment());
         fragmentList.add(NewsListFragment.newInstance("3", null));
         fragmentList.add(NewsListFragment.newInstance("2", null));
         fragmentList.add(new MineFragment());

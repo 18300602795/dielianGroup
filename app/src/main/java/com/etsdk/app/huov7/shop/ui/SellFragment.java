@@ -29,6 +29,7 @@ import com.game.sdk.http.LoadWaitDialogUtil;
 import com.game.sdk.util.GsonUtil;
 import com.kymjs.rxvolley.RxVolley;
 import com.kymjs.rxvolley.client.HttpParams;
+import com.liang530.log.L;
 import com.liang530.log.T;
 import com.liang530.photopicker.ShowPicVPActivity;
 import com.liang530.photopicker.beans.SelectPhotoEvent;
@@ -370,6 +371,7 @@ public class SellFragment extends AutoLazyFragment {
         HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.dealAccountEdit);
         int i = 1;
         for (String path : imagebox.getAllImages()) {//耗时操作
+            L.e("333", "图片：" + path);
             httpParams.put("image[]", new File(path));
             i++;
         }
@@ -499,8 +501,8 @@ public class SellFragment extends AutoLazyFragment {
                 MyAccountListActivity.start(mContext, gameId);
                 break;
             case R.id.tv_commit:
-//                edit2();
-                getUserInfoBeforePublish();
+                edit2();
+//                getUserInfoBeforePublish();
                 break;
             case R.id.tv_service_center:
                 ServiceActivity.start(mContext);

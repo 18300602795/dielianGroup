@@ -1,1 +1,1 @@
-include 'app', ':jcvideoplayer-lib', ':baseadapter-recyclerview'
+include 'app', ':jcvideoplayer-lib', ':baseadapter-recyclerview', ':multi-image-selector'

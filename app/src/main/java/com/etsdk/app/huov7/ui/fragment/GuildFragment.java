@@ -13,15 +13,12 @@ import com.etsdk.app.huov7.model.GameBeanList;
 import com.etsdk.app.huov7.model.GuildHeader;
 import com.etsdk.app.huov7.provider.GameItemViewProvider2;
 import com.etsdk.app.huov7.provider.GuildHeaderViewProvider;
-import com.etsdk.app.huov7.view.header_view.GuildHeaderView;
 import com.etsdk.hlrefresh.AdvRefreshListener;
 import com.etsdk.hlrefresh.BaseRefreshLayout;
 import com.etsdk.hlrefresh.MVCSwipeRefreshHelper;
 import com.kymjs.rxvolley.client.HttpParams;
 import com.liang530.rxvolley.HttpJsonCallBackDialog;
 import com.liang530.rxvolley.NetRequest;
-import com.zhy.adapter.recyclerview.wrapper.HeaderAndFooterWrapper;
-import com.zhy.adapter.recyclerview.wrapper.LoadMoreWrapper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -41,10 +38,6 @@ public class GuildFragment extends AutoLazyFragment implements AdvRefreshListene
     RecyclerView fragment_recycle;
     @BindView(R.id.swrefresh)
     SwipeRefreshLayout swrefresh;
-    GuildHeaderView headerView;
-    private int currentPage = 1;
-    private HeaderAndFooterWrapper headerAndFooterWrapper;
-    private LoadMoreWrapper mLoadMoreWrapper;
     private MultiTypeAdapter multiTypeAdapter;
     Items items = new Items();
     BaseRefreshLayout baseRefreshLayout;

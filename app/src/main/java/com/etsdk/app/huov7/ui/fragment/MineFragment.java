@@ -48,6 +48,7 @@ public class MineFragment extends AutoLazyFragment {
             public void onDataSuccess(UserInfoResultBean data) {
                 if (adapter != null)
                     adapter.setData(data);
+
             }
 
             @Override

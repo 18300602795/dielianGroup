@@ -84,6 +84,17 @@ public class AppApi {
     public static final String userHeadImgApi="user/portrait/update";
     public static final String newsList="news/list";//新闻列表
     public static final String newsDetail="news/webdetail/";//新闻详情，后面要加上id
+    //评论
+    public static final String addArticleApi="bbs/add";
+    public static final String postListApi="bbs/list";
+    public static final String addPraiseApi="bbs/add_praise";
+    public static final String addCommentsApi="bbs/add_comments";
+    public static final String addReplyApi="bbs/add_reply";
+    public static final String detailsListApi="bbs/details_list";
+    public static final String delArticleApi="bbs/del_article";
+    public static final String delCommentsApi="bbs/del_comments";
+    public static final String delReplyApi="bbs/del_reply";
+    public static final String myListApi="bbs/mylist";
 
     //需要加密接口
     public static final String appinit="system/appinit";
