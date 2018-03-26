@@ -1,45 +1,50 @@
 package com.etsdk.app.huov7.ui;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.etsdk.app.huov7.R;
-import com.etsdk.app.huov7.adapter.ReplyAdapter;
 import com.etsdk.app.huov7.base.ImmerseActivity;
 import com.etsdk.app.huov7.http.AppApi;
 import com.etsdk.app.huov7.model.ArticleBean;
 import com.etsdk.app.huov7.model.ArticleBeans;
+import com.etsdk.app.huov7.model.Comment;
+import com.etsdk.app.huov7.provider.ArticleHeaderViewProvider;
+import com.etsdk.app.huov7.provider.CommentListItemViewProvider;
 import com.etsdk.app.huov7.util.JsonUtil;
-import com.etsdk.app.huov7.view.header_view.CommentHeaderView;
+import com.etsdk.app.huov7.util.StringUtils;
+import com.etsdk.hlrefresh.AdvRefreshListener;
+import com.etsdk.hlrefresh.BaseRefreshLayout;
+import com.etsdk.hlrefresh.MVCSwipeRefreshHelper;
 import com.kymjs.rxvolley.client.HttpParams;
 import com.liang530.log.L;
 import com.liang530.log.T;
 import com.liang530.rxvolley.HttpJsonCallBackDialog;
 import com.liang530.rxvolley.NetRequest;
-import com.zhy.adapter.recyclerview.wrapper.HeaderAndFooterWrapper;
-import com.zhy.adapter.recyclerview.wrapper.LoadMoreWrapper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.drakeet.multitype.Items;
+import me.drakeet.multitype.MultiTypeAdapter;
 
 /**
  * Created by Administrator on 2018\3\5 0005.
  */
 
-public class CommentActivity extends ImmerseActivity {
+public class CommentActivity extends ImmerseActivity implements AdvRefreshListener {
     @BindView(R.id.tv_titleName)
     TextView tv_titleName;
     @BindView(R.id.iv_title_down)
@@ -48,35 +53,14 @@ public class CommentActivity extends ImmerseActivity {
     EditText comment_et;
     @BindView(R.id.comment_tv)
     TextView comment_tv;
-    @BindView(R.id.comment_recycle)
-    RecyclerView comment_recycle;
-    ReplyAdapter adapter;
-    CommentHeaderView headerView;
-    HeaderAndFooterWrapper headerAndFooterWrapper;
-    LoadMoreWrapper mLoadMoreWrapper;
-    ArticleBeans commentBeans;
-
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
+    @BindView(R.id.swrefresh)
+    SwipeRefreshLayout swrefresh;
+    Items items = new Items();
+    BaseRefreshLayout baseRefreshLayout;
+    private MultiTypeAdapter multiTypeAdapter;
     ArticleBean argumentBean;
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case 1:
-                    T.s(mContext, (String) msg.obj);
-                    break;
-                case 2:
-                    adapter = new ReplyAdapter(mContext, commentBeans.getCom());
-                    headerView = new CommentHeaderView(mContext, argumentBean);
-                    headerAndFooterWrapper = new HeaderAndFooterWrapper(adapter);
-                    headerAndFooterWrapper.addHeaderView(headerView);
-                    mLoadMoreWrapper = new LoadMoreWrapper(headerAndFooterWrapper);
-                    comment_recycle.setAdapter(mLoadMoreWrapper);
-                    headerView.setLikes(commentBeans.getPraise());
-                    break;
-            }
-        }
-    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,16 +68,24 @@ public class CommentActivity extends ImmerseActivity {
         setContentView(R.layout.activity_comment);
         ButterKnife.bind(this);
         initDate();
-        getComments();
     }
 
 
     private void initDate() {
         tv_titleName.setText("评论");
         argumentBean = (ArticleBean) getIntent().getSerializableExtra("argument");
+        baseRefreshLayout = new MVCSwipeRefreshHelper(swrefresh);
+        multiTypeAdapter = new MultiTypeAdapter(items);
+        multiTypeAdapter.applyGlobalMultiTypePool();
+        multiTypeAdapter.register(ArticleBeans.class, new ArticleHeaderViewProvider(baseRefreshLayout));
+        multiTypeAdapter.register(Comment.class, new CommentListItemViewProvider());
+        multiTypeAdapter.notifyDataSetChanged();
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        baseRefreshLayout.setAdapter(multiTypeAdapter);
+        baseRefreshLayout.setAdvRefreshListener(this);
+        baseRefreshLayout.refresh();
         iv_title_down.setVisibility(View.VISIBLE);
         iv_title_down.setImageResource(R.mipmap.share);
-        comment_recycle.setLayoutManager(new LinearLayoutManager(mContext));
         comment_et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -106,7 +98,8 @@ public class CommentActivity extends ImmerseActivity {
         });
     }
 
-    private void getComments() {
+    @Override
+    public void getPageData(final int requestPageNo) {
         HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.detailsListApi);
         httpParams.put("article_id", argumentBean.getArticle_id());
         //成功，失败，null数据
@@ -114,71 +107,74 @@ public class CommentActivity extends ImmerseActivity {
             @Override
             public void onDataSuccess(String data) {
                 L.e("333", "data：" + data);
-                try {
-                    parseJson(data);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
             }
 
             @Override
             public void onJsonSuccess(int code, String msg, String data) {
                 L.e("333", "code：" + code + "msg：" + msg + "data：" + data);
                 try {
-                    parseJson(data);
+                    JSONObject jsonObject = new JSONObject(data);
+                    String data2 = jsonObject.getString("data");
+                    L.e("333", "data2：" + data2);
+                    ArticleBeans articleBeans = JsonUtil.parse(data2, ArticleBeans.class);
+                    if (articleBeans != null && articleBeans.getCom() != null) {
+                        int maxPage = (int) Math.ceil(articleBeans.getCom().size() / 20.);
+                        Items resultItems = new Items();
+                        resultItems.add(articleBeans);
+                        resultItems.addAll(articleBeans.getCom());
+                        baseRefreshLayout.resultLoadData(items, resultItems, maxPage);
+                    } else if (articleBeans != null && articleBeans.getCom() == null) {
+                        Items resultItems = new Items();
+                        resultItems.add(articleBeans);
+                        baseRefreshLayout.resultLoadData(items, resultItems, 1);
+                    } else {
+                        baseRefreshLayout.resultLoadData(items, new ArrayList(), requestPageNo - 1);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    L.e("333", "e：" + e.toString());
                 }
             }
 
             @Override
             public void onFailure(int errorNo, String strMsg, String completionInfo) {
                 L.e("333", "errorNo：" + errorNo + "strMsg：" + strMsg + "completionInfo：" + completionInfo);
+                baseRefreshLayout.resultLoadData(items, null, null);
             }
         });
-    }
-
-    private void parseJson(String res) throws JSONException {
-        JSONObject jsonObject = new JSONObject(res);
-        int code = jsonObject.getInt("code");
-        String data = jsonObject.getString("data");
-        if (code == 200) {
-            commentBeans = JsonUtil.parse(data, ArticleBeans.class);
-            Log.i("333", "commentBeans：" + commentBeans.getArticle_id());
-            Log.i("333", "commentBeans：" + commentBeans.getPraise());
-            Message message = new Message();
-            message.what = 2;
-            handler.sendMessage(message);
-        } else {
-            String msg = jsonObject.getString("msg");
-            Message message = new Message();
-            message.what = 1;
-            message.obj = msg;
-            handler.sendMessage(message);
-        }
     }
 
     private void sendComment() {
-        HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.addReplyApi);
+        if (StringUtils.isEmpty(comment_et.getText().toString())) {
+            T.s(mContext, "请输入评论内容");
+            return;
+        }
+        HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.addCommentsApi);
         httpParams.put("article_id", argumentBean.getArticle_id());
         httpParams.put("contents", comment_et.getText().toString());
         //成功，失败，null数据
-        NetRequest.request(this).setParams(httpParams).post(AppApi.getUrl(AppApi.addReplyApi), new HttpJsonCallBackDialog<String>() {
+        NetRequest.request(this).setParams(httpParams).post(AppApi.getUrl(AppApi.addCommentsApi), new HttpJsonCallBackDialog<String>() {
             @Override
             public void onDataSuccess(String data) {
                 L.e("333", "data：" + data);
-                try {
-                    parseJson2(data);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
             }
 
             @Override
             public void onJsonSuccess(int code, String msg, String data) {
                 L.e("333", "code：" + code + "msg：" + msg + "data：" + data);
+                comment_et.setText("");
                 try {
-                    parseJson2(data);
+                    JSONObject jsonObject = new JSONObject(data);
+                    int code2 = jsonObject.getInt("code");
+                    if (code2 == 201) {
+                        LoginActivity.start(mContext);
+                        return;
+                    }
+                    if (code2 == 200) {
+                        baseRefreshLayout.refresh();
+                    } else {
+                        T.s(mContext, msg);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -189,19 +185,6 @@ public class CommentActivity extends ImmerseActivity {
                 L.e("333", "errorNo：" + errorNo + "strMsg：" + strMsg + "completionInfo：" + completionInfo);
             }
         });
-    }
-
-    private void parseJson2(String res) throws JSONException {
-        JSONObject jsonObject = new JSONObject(res);
-        int code = jsonObject.getInt("code");
-        if (code == 200) {
-        } else {
-            String msg = jsonObject.getString("msg");
-            Message message = new Message();
-            message.what = 1;
-            message.obj = msg;
-            handler.sendMessage(message);
-        }
     }
 
 
@@ -217,5 +200,12 @@ public class CommentActivity extends ImmerseActivity {
                 sendComment();
                 break;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (baseRefreshLayout != null)
+            baseRefreshLayout.refresh();
     }
 }

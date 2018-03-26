@@ -82,6 +82,11 @@ dependencies {
     compile project(':baseadapter-recyclerview')
     compile project(':multi-image-selector')
     compile files('libs/jcore-android-1.1.9.jar')
+    compile project(':reclib-qq')
+    compile project(':reclib-testemoticons')
+    compile 'com.github.w446108264:AndroidEmoji:1.0.0'
+    compile files('libs/universal-image-loader-1.9.5.jar')
+    compile 'io.reactivex:rxandroid:1.2.1'
 }
 //apply plugin: 'AndResGuard'
 apply plugin: 'com.antfortune.freeline'

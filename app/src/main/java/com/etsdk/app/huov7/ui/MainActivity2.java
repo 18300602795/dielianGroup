@@ -15,14 +15,19 @@ import android.widget.Toast;
 
 import com.etsdk.app.huov7.R;
 import com.etsdk.app.huov7.adapter.GroupHomeAdapter;
+import com.etsdk.app.huov7.base.AileApplication;
 import com.etsdk.app.huov7.base.ImmerseActivity;
+import com.etsdk.app.huov7.chat.ui.ChatActivity;
 import com.etsdk.app.huov7.model.StartupResultBean;
+import com.etsdk.app.huov7.ui.fragment.ChatFragment;
 import com.etsdk.app.huov7.ui.fragment.GuildFragment;
 import com.etsdk.app.huov7.ui.fragment.HouseFragment;
 import com.etsdk.app.huov7.ui.fragment.MineFragment;
 import com.etsdk.app.huov7.ui.fragment.NewsListFragment;
 import com.etsdk.app.huov7.update.UpdateVersionDialog;
 import com.etsdk.app.huov7.update.UpdateVersionService;
+import com.etsdk.app.huov7.util.StringUtils;
+import com.etsdk.app.huov7.util.TimeUtils;
 import com.game.sdk.log.L;
 import com.jaeger.library.StatusBarUtil;
 import com.jude.swipbackhelper.SwipeBackHelper;
@@ -37,6 +42,15 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.android.api.callback.CreateGroupCallback;
+import cn.jpush.im.android.api.callback.GetUserInfoCallback;
+import cn.jpush.im.android.api.enums.ConversationType;
+import cn.jpush.im.android.api.event.GroupApprovalEvent;
+import cn.jpush.im.android.api.event.MessageEvent;
+import cn.jpush.im.android.api.event.NotificationClickEvent;
+import cn.jpush.im.android.api.model.Message;
+import cn.jpush.im.android.api.model.UserInfo;
 
 /**
  * Created by Administrator on 2018\3\14 0014.
@@ -94,8 +108,8 @@ public class MainActivity2 extends ImmerseActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             L.i("333", "透明状态栏");
             setTranslucentStatus(true);
-
         }
+        JMessageClient.registerEventReceiver(this);
         setContentView(R.layout.activity_main3);
         ButterKnife.bind(this);
         SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
@@ -173,6 +187,63 @@ public class MainActivity2 extends ImmerseActivity {
         }
     }
 
+    public void onEventMainThread(final MessageEvent event) {
+        L.i("333", "聊天信息：");
+        Message message = event.getMessage();
+        if (message.getTargetType() == ConversationType.single) {
+            L.i("333", "聊天信息：单聊");
+            if (fragmentList.get(2) != null) {
+                ((ChatFragment) fragmentList.get(2)).has_img.setVisibility(View.VISIBLE);
+                ((ChatFragment) fragmentList.get(2)).chat_count_tv.setVisibility(View.VISIBLE);
+
+                ((ChatFragment) fragmentList.get(2)).chat_count_tv.setText(StringUtils.getCont(message));
+            }
+        } else if (message.getTargetType() == ConversationType.group) {
+            L.i("333", "聊天信息：群组");
+            ((ChatFragment) fragmentList.get(2)).count_tv.setText(StringUtils.getCont(message));
+            ((ChatFragment) fragmentList.get(2)).time_tv.setText(TimeUtils.getTime(message.getCreateTime() / 1000));
+        }
+    }
+
+    public void onEventMainThread(final GroupApprovalEvent event) {
+        //do your own business
+        L.i("333", "入群申请：");
+        event.getFromUserInfo(new GetUserInfoCallback() {
+            @Override
+            public void gotResult(int i, String s, UserInfo userInfo) {
+                if (userInfo != null) {
+                    event.acceptGroupApproval(userInfo.getUserName(), "", new CreateGroupCallback() {
+                        @Override
+                        public void gotResult(int i, String s, long l) {
+                            L.i("333", "同意入群：" + s);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public void onEventMainThread(final NotificationClickEvent event) {
+        //do your own business
+        L.i("333", "通知栏消息：");
+        Message message = event.getMessage();
+        switch (message.getTargetType()) {
+            case group:
+                Intent intent = new Intent(mContext, ChatActivity.class);
+                intent.putExtra(AileApplication.GROUP_ID, Long.valueOf(message.getTargetID()));
+                intent.putExtra(AileApplication.CONV_TITLE, message.getFromName());
+                startActivity(intent);
+                break;
+            case single:
+                Intent single_intent = new Intent(mContext, ChatActivity.class);
+                single_intent.putExtra(AileApplication.TARGET_ID, message.getTargetID());
+                single_intent.putExtra(AileApplication.CONV_TITLE, message.getFromName());
+                startActivity(single_intent);
+                break;
+        }
+    }
+
+
     private void initDate() {
         handleUpdate();
         views = new ArrayList<>();
@@ -189,7 +260,7 @@ public class MainActivity2 extends ImmerseActivity {
         textViews.add(mine_tv);
         fragmentList.add(new GuildFragment());
         fragmentList.add(new HouseFragment());
-        fragmentList.add(NewsListFragment.newInstance("3", null));
+        fragmentList.add(new ChatFragment());
         fragmentList.add(NewsListFragment.newInstance("2", null));
         fragmentList.add(new MineFragment());
         mAdapter = new GroupHomeAdapter(getSupportFragmentManager(), fragmentList);
@@ -313,4 +384,9 @@ public class MainActivity2 extends ImmerseActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        JMessageClient.unRegisterEventReceiver(this);
+    }
 }

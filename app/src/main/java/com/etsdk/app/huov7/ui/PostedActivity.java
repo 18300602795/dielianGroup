@@ -2,15 +2,17 @@ package com.etsdk.app.huov7.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -21,10 +23,17 @@ import com.etsdk.app.huov7.R;
 import com.etsdk.app.huov7.adapter.PostPhotoAdapter;
 import com.etsdk.app.huov7.base.ImmerseActivity;
 import com.etsdk.app.huov7.http.AppApi;
+import com.etsdk.app.huov7.ui.dialog.ProgressDialog;
+import com.etsdk.app.huov7.util.PhotoUtils;
+import com.etsdk.app.huov7.util.StringUtils;
 import com.kymjs.rxvolley.client.HttpParams;
 import com.liang530.log.L;
+import com.liang530.log.T;
 import com.liang530.rxvolley.HttpJsonCallBackDialog;
 import com.liang530.rxvolley.NetRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,13 +59,16 @@ public class PostedActivity extends ImmerseActivity implements PostPhotoAdapter.
     TextView tv_titleRight;
     @BindView(R.id.photo_recycle)
     RecyclerView photo_recycle;
-    List<String> bitmaps;
+    List<String> imgs;
+    List<Bitmap> bitmaps;
     ArrayList<String> mSelectPath;
     PostPhotoAdapter photoAdapter;
     @BindView(R.id.title_et)
     EditText title_et;
     @BindView(R.id.con_et)
     EditText con_et;
+    ProgressDialog progressDialog;
+    String path = Environment.getExternalStorageDirectory().getPath() + File.separator + "/photo";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,12 +79,14 @@ public class PostedActivity extends ImmerseActivity implements PostPhotoAdapter.
     }
 
     private void initDate() {
+        progressDialog = new ProgressDialog();
         tv_titleName.setText("发帖");
         tv_titleRight.setVisibility(View.VISIBLE);
         tv_titleRight.setText("发布");
         photo_recycle.setLayoutManager(new GridLayoutManager(mContext, 5));
+        imgs = new ArrayList<>();
         bitmaps = new ArrayList<>();
-        photoAdapter = new PostPhotoAdapter(bitmaps, mContext);
+        photoAdapter = new PostPhotoAdapter(imgs, mContext);
         photoAdapter.setPhotoCallback(this);
         photo_recycle.setAdapter(photoAdapter);
     }
@@ -84,29 +98,56 @@ public class PostedActivity extends ImmerseActivity implements PostPhotoAdapter.
                 finish();
                 break;
             case R.id.tv_titleRight:
+                if (StringUtils.isEmpty(title_et.getText().toString())) {
+                    T.s(mContext, "文章标题不能为空");
+                    return;
+                }
+
+                if (StringUtils.isEmpty(con_et.getText().toString())) {
+                    T.s(mContext, "文章内容不能为空");
+                    return;
+                }
+                progressDialog.show(mContext, "正在提交...");
                 HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.addArticleApi);
                 httpParams.put("article_title", title_et.getText().toString());
                 httpParams.put("contents", con_et.getText().toString());
-                L.e("333", "图片：" + bitmaps.size());
-                for (String path : bitmaps) {//耗时操作
-                    L.e("333", "图片：" + path);
-                    httpParams.put("image[]", new File(path));
+                L.e("333", "图片：" + imgs.size());
+                for (int i = 0; i < bitmaps.size(); i++) {
+                    httpParams.put("image[]", PhotoUtils.saveBitmapFile(bitmaps.get(i), path + i + ".jpg"));
                 }
                 //成功，失败，null数据
-                NetRequest.request(this).setParams(httpParams).showDialog(true).post(AppApi.getUrl(AppApi.addArticleApi), new HttpJsonCallBackDialog<String>() {
+                NetRequest.request(this).setParams(httpParams).post(AppApi.getUrl(AppApi.addArticleApi), new HttpJsonCallBackDialog<String>() {
                     @Override
                     public void onDataSuccess(String data) {
+                        progressDialog.dismiss();
                         L.e("333", "data：" + data);
                     }
 
                     @Override
                     public void onJsonSuccess(int code, String msg, String data) {
                         L.e("333", "code：" + code + "msg：" + msg + "data：" + data);
+                        progressDialog.dismiss();
+                        try {
+                            JSONObject jsonObject = new JSONObject(data);
+                            int code2 = jsonObject.getInt("code");
+                            if (code2 == 201) {
+                                LoginActivity.start(mContext);
+                                return;
+                            }
+                            if (code2 == 200) {
+                                finish();
+                            } else {
+                                T.s(mContext, msg);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     @Override
                     public void onFailure(int errorNo, String strMsg, String completionInfo) {
                         L.e("333", "errorNo：" + errorNo + "strMsg：" + strMsg + "completionInfo：" + completionInfo);
+                        progressDialog.dismiss();
                     }
                 });
                 break;
@@ -116,7 +157,7 @@ public class PostedActivity extends ImmerseActivity implements PostPhotoAdapter.
 
     @Override
     public void close(int position) {
-        bitmaps.remove(position);
+        imgs.remove(position);
         photoAdapter.notifyDataSetChanged();
     }
 
@@ -182,9 +223,16 @@ public class PostedActivity extends ImmerseActivity implements PostPhotoAdapter.
         if (requestCode == REQUEST_IMAGE) {
             if (resultCode == RESULT_OK) {
                 mSelectPath = data.getStringArrayListExtra(MultiImageSelector.EXTRA_RESULT);
-                bitmaps.clear();
-                for (String p : mSelectPath) {
-                    bitmaps.add(p);
+                imgs.clear();
+                imgs.clear();
+                for (final String p : mSelectPath) {
+                    imgs.add(p);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            bitmaps.add(PhotoUtils.getimage(p, 1080, 1920));
+                        }
+                    }).start();
                 }
                 photoAdapter.notifyDataSetChanged();
             }

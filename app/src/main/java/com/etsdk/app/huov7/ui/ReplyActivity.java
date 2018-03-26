@@ -13,16 +13,17 @@ import com.etsdk.app.huov7.adapter.ReplyAdapter2;
 import com.etsdk.app.huov7.base.ImmerseActivity;
 import com.etsdk.app.huov7.http.AppApi;
 import com.etsdk.app.huov7.model.Comment;
-import com.etsdk.app.huov7.model.ReplyBean;
 import com.etsdk.app.huov7.view.header_view.ReplyHeaderView;
 import com.kymjs.rxvolley.client.HttpParams;
 import com.liang530.log.L;
+import com.liang530.log.T;
 import com.liang530.rxvolley.HttpJsonCallBackDialog;
 import com.liang530.rxvolley.NetRequest;
 import com.zhy.adapter.recyclerview.wrapper.HeaderAndFooterWrapper;
 import com.zhy.adapter.recyclerview.wrapper.LoadMoreWrapper;
 
-import java.util.ArrayList;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,7 +45,6 @@ public class ReplyActivity extends ImmerseActivity {
     HeaderAndFooterWrapper headerAndFooterWrapper;
     LoadMoreWrapper mLoadMoreWrapper;
     Comment comment;
-    String title;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,12 +57,11 @@ public class ReplyActivity extends ImmerseActivity {
 
     private void initDate() {
         comment = (Comment) getIntent().getSerializableExtra("cont");
-        title = getIntent().getStringExtra("title");
-        tv_titleName.setText(title);
-        adapter2 = new ReplyAdapter2(mContext, new ArrayList<ReplyBean>());
+        tv_titleName.setText(comment.getUname());
+        adapter2 = new ReplyAdapter2(mContext, comment.getReply());
         item_recycle.setLayoutManager(new LinearLayoutManager(mContext));
         item_recycle.setAdapter(adapter2);
-        headerView = new ReplyHeaderView(mContext, title);
+        headerView = new ReplyHeaderView(mContext);
         headerAndFooterWrapper = new HeaderAndFooterWrapper(adapter2);
         headerAndFooterWrapper.addHeaderView(headerView);
         headerView.setData(comment);
@@ -99,6 +98,21 @@ public class ReplyActivity extends ImmerseActivity {
             @Override
             public void onJsonSuccess(int code, String msg, String data) {
                 L.e("333", "code：" + code + "msg：" + msg + "data：" + data);
+                try {
+                    JSONObject jsonObject = new JSONObject(data);
+                    int code2 = jsonObject.getInt("code");
+                    if (code2 == 201) {
+                        LoginActivity.start(mContext);
+                        return;
+                    }
+                    if (code2 == 200) {
+                        finish();
+                    } else {
+                        T.s(mContext, msg);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override

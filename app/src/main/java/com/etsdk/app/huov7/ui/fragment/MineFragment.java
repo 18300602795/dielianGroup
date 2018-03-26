@@ -46,9 +46,9 @@ public class MineFragment extends AutoLazyFragment {
         HttpNoLoginCallbackDecode httpCallbackDecode = new HttpNoLoginCallbackDecode<UserInfoResultBean>(getActivity(), httpParamsBuild.getAuthkey()) {
             @Override
             public void onDataSuccess(UserInfoResultBean data) {
-                if (adapter != null)
+                if (adapter != null) {
                     adapter.setData(data);
-
+                }
             }
 
             @Override
@@ -62,7 +62,7 @@ public class MineFragment extends AutoLazyFragment {
         httpCallbackDecode.setShowTs(true);
         httpCallbackDecode.setLoadingCancel(false);
         httpCallbackDecode.setShowLoading(false);
-        RxVolley.post(AppApi.getUrl(AppApi.userDetailApi), httpParamsBuild.getHttpParams(), httpCallbackDecode);
+        RxVolley.post(AppApi.getUrl(AppApi.userDetailApi2), httpParamsBuild.getHttpParams(), httpCallbackDecode);
     }
 
     @Override
@@ -76,5 +76,10 @@ public class MineFragment extends AutoLazyFragment {
      */
     public void updateData() {
         getUserInfoData();
+    }
+
+    @Override
+    protected void onResumeLazy() {
+        super.onResumeLazy();
     }
 }

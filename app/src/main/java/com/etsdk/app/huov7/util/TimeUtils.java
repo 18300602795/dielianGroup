@@ -1,5 +1,7 @@
 package com.etsdk.app.huov7.util;
 
+import com.liang530.log.L;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,6 +12,7 @@ import java.util.Date;
 
 public class TimeUtils {
     public static String getTime(long time) {
+        L.i("333", "time：" + time);
         String timeString = "";
         long current_time = System.currentTimeMillis();
         long sub_time = (current_time - time * 1000) / 1000;

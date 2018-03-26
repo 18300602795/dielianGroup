@@ -1,6 +1,7 @@
 package com.etsdk.app.huov7.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by Administrator on 2018\3\12 0012.
@@ -16,12 +17,15 @@ public class Comment implements Serializable {
     private String d_status;
     private String portrait;
     private String uname;
-//    private String from_uname;
-//    private String to_uname;
-//    private List<ReplyBean> reply;
-//    public List<ReplyBean> getReply() {
-//        return reply;
-//    }
+    private List<ReplyBean> reply;
+
+    public List<ReplyBean> getReply() {
+        return reply;
+    }
+
+    public void setReply(List<ReplyBean> reply) {
+        this.reply = reply;
+    }
 
     public String getId() {
         return id;

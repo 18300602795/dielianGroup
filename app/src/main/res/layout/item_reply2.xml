@@ -22,12 +22,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="aaa：11   刚刚"
-            android:textSize="10sp" />
+            android:textSize="12sp" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
-            android:src="@mipmap/trash" />
+            android:src="@mipmap/trash"
+            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

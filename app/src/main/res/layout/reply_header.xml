@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -11,17 +12,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:orientation="horizontal">
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp">
 
-            <ImageView
+            <com.liang530.views.imageview.roundedimageview.RoundedImageView
                 android:id="@+id/head_img"
-                android:layout_width="60dp"
-                android:layout_height="match_parent"
-                android:src="@mipmap/syicon" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@mipmap/syicon"
+                app:riv_corner_radius="5dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
@@ -35,48 +41,34 @@
                         android:id="@+id/name_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="剑语公会小秘书"
                         android:textColor="@color/black" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/reading"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/read_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginLeft="5dp"
                         android:layout_marginRight="15dp"
-                        android:background="@drawable/owner_bg"
-                        android:paddingBottom="3dp"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp"
-                        android:paddingTop="3dp"
-                        android:text="楼主"
-                        android:visibility="gone"
-                        android:textColor="@color/white"
-                        android:textSize="12sp" />
-
+                        android:text="0"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/time_tv"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tower_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="第2楼"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/time_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:text="2018-02-26"
-                        android:textSize="12sp" />
-                </LinearLayout>
+                    android:text="7小时前"
+                    android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -103,6 +95,6 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="10dp"
-            android:background="@color/line_gray" />
+            android:background="@color/aile_line_gray" />
     </LinearLayout>
 </RelativeLayout>

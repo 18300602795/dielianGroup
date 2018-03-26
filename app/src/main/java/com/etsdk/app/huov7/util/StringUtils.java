@@ -4,6 +4,9 @@ import android.content.Context;
 
 import java.util.Map;
 
+import cn.jpush.im.android.api.content.TextContent;
+import cn.jpush.im.android.api.model.Message;
+
 /**
  * Created by Administrator on 2017/10/26.
  */
@@ -62,5 +65,34 @@ public class StringUtils {
     public static int px2dip(Context context, float pxValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
+    }
+
+    public static String getCont(Message message) {
+        String cont = "";
+        switch (message.getContentType()) {
+            case file:
+                cont = "文件消息";
+                break;
+            case image:
+                cont = "图片消息";
+                break;
+            case location:
+                cont = "位置消息";
+                break;
+            case text:
+                TextContent textContent = (TextContent) message.getContent();
+                cont = textContent.getText();
+                break;
+            case video:
+                cont = "视频消息";
+                break;
+            case voice:
+                cont = "语音消息";
+                break;
+            default: {
+                cont = "未知消息";
+            }
+        }
+        return message.getFromUser().getUserName() + "：" + cont;
     }
 }

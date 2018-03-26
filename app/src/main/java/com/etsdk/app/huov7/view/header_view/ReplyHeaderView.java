@@ -9,9 +9,12 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.etsdk.app.huov7.R;
 import com.etsdk.app.huov7.model.Comment;
 import com.etsdk.app.huov7.util.TimeUtils;
+import com.game.sdk.SdkConstant;
+import com.liang530.views.imageview.roundedimageview.RoundedImageView;
 
 
 /**
@@ -20,14 +23,16 @@ import com.etsdk.app.huov7.util.TimeUtils;
 
 public class ReplyHeaderView extends RelativeLayout {
     View mRootView;
-    private Context mContext;
-    private TextView check_tv, name_tv, item_con, tower_tv, time_tv;
-    private String tower;
+    Context mContext;
+    TextView check_tv;
+    TextView name_tv;
+    TextView item_con;
+    TextView time_tv;
+    RoundedImageView head_img;
 
-    public ReplyHeaderView(Context context, String tower) {
+    public ReplyHeaderView(Context context) {
         super(context);
         this.mContext = context;
-        this.tower = tower;
         initView();
     }
 
@@ -48,9 +53,8 @@ public class ReplyHeaderView extends RelativeLayout {
         check_tv = mRootView.findViewById(R.id.check_tv);
         item_con = mRootView.findViewById(R.id.item_con);
         name_tv = mRootView.findViewById(R.id.name_tv);
-        tower_tv = mRootView.findViewById(R.id.tower_tv);
         time_tv = mRootView.findViewById(R.id.time_tv);
-        tower_tv.setText(tower);
+        head_img = mRootView.findViewById(R.id.head_img);
         check_tv.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,9 +64,11 @@ public class ReplyHeaderView extends RelativeLayout {
     }
 
     public void setData(Comment comment) {
-//        name_tv.setText(comment.getFrom_uname());
+        Glide.with(mContext).load(SdkConstant.BASE_URL + comment.getPortrait()).placeholder(R.mipmap.ic_launcher).into(head_img);
+        name_tv.setText(comment.getUname());
         item_con.setText(comment.getContent());
         time_tv.setText(TimeUtils.getTime(Long.valueOf(comment.getTime())));
+
     }
 
 }

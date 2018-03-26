@@ -33,7 +33,7 @@ public class ReplyAdapter2 extends RecyclerView.Adapter<ReplyAdapter2.ItemReplyH
 
     @Override
     public void onBindViewHolder(ItemReplyHolderView holder, int position) {
-        String msg = replyBeens.get(position).getFrom_uname() + "回复" + replyBeens.get(position).getTo_uname() + "：" + replyBeens.get(position).getContent();
+        String msg = replyBeens.get(position).getForm_uname() + "回复" + replyBeens.get(position).getTo_uname() + "：" + replyBeens.get(position).getContent();
         holder.con_tv.setText(msg);
     }
 

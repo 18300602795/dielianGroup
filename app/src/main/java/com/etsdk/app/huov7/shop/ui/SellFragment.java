@@ -29,7 +29,6 @@ import com.game.sdk.http.LoadWaitDialogUtil;
 import com.game.sdk.util.GsonUtil;
 import com.kymjs.rxvolley.RxVolley;
 import com.kymjs.rxvolley.client.HttpParams;
-import com.liang530.log.L;
 import com.liang530.log.T;
 import com.liang530.photopicker.ShowPicVPActivity;
 import com.liang530.photopicker.beans.SelectPhotoEvent;
@@ -366,33 +365,6 @@ public class SellFragment extends AutoLazyFragment {
         });
     }
 
-    private void edit2() {
-        T.s(mContext, "开始上传图片");
-        HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.dealAccountEdit);
-        int i = 1;
-        for (String path : imagebox.getAllImages()) {//耗时操作
-            L.e("333", "图片：" + path);
-            httpParams.put("image[]", new File(path));
-            i++;
-        }
-        NetRequest.request(this).setParams(httpParams).showDialog(true).post("https://api.idielian.com/api/v7/bbs/list", new HttpJsonCallBackDialog<ResultBean>() {
-            @Override
-            public void onDataSuccess(ResultBean data) {
-                if (data.getCode() == 200) {
-                    T.s(mContext, "发布成功，请耐心等待审核通过");
-                    EventBus.getDefault().post(new ShopListRefreshEvent());
-                } else {
-                    T.s(mContext, "提交失败 " + data.getMsg());
-                }
-            }
-
-            @Override
-            public void onFailure(int errorNo, String strMsg, String completionInfo) {
-                T.s(mContext, "提交失败 " + strMsg);
-            }
-        });
-    }
-
     /**
      * 编辑
      *
@@ -501,8 +473,7 @@ public class SellFragment extends AutoLazyFragment {
                 MyAccountListActivity.start(mContext, gameId);
                 break;
             case R.id.tv_commit:
-                edit2();
-//                getUserInfoBeforePublish();
+                getUserInfoBeforePublish();
                 break;
             case R.id.tv_service_center:
                 ServiceActivity.start(mContext);

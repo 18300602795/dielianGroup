@@ -16,6 +16,7 @@ import com.etsdk.app.huov7.R;
 import com.etsdk.app.huov7.http.AppApi;
 import com.etsdk.app.huov7.model.ArticleBean;
 import com.etsdk.app.huov7.ui.CommentActivity;
+import com.etsdk.app.huov7.ui.LoginActivity;
 import com.etsdk.app.huov7.ui.ShowImageActivity;
 import com.etsdk.app.huov7.util.StringUtils;
 import com.etsdk.app.huov7.util.TimeUtils;
@@ -26,6 +27,9 @@ import com.liang530.log.T;
 import com.liang530.rxvolley.HttpJsonCallBackDialog;
 import com.liang530.rxvolley.NetRequest;
 import com.liang530.views.imageview.roundedimageview.RoundedImageView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -147,16 +151,26 @@ public class ArticleListItemViewProvider
                     @Override
                     public void onJsonSuccess(int code, String msg, String data) {
                         L.e("333", "code：" + code + "msg：" + msg + "data：" + data);
-                        if (code == 400) {
-                            if (articleBean.getP_status() != null && articleBean.getP_status().equals("1")) {
-                                articleBean.setP_status("2");
-                                articleBean.setLike_number(String.valueOf(Integer.valueOf(articleBean.getLike_number()) - 1));
-                            } else {
-                                articleBean.setP_status("1");
-                                articleBean.setLike_number(String.valueOf(Integer.valueOf(articleBean.getLike_number()) + 1));
+                        try {
+                            JSONObject jsonObject = new JSONObject(data);
+                            int code2 = jsonObject.getInt("code");
+                            if (code2 == 201) {
+                                LoginActivity.start(holder.context);
+                                return;
                             }
-                        } else {
-                            T.s(holder.context, msg);
+                            if (code2 == 200) {
+                                if (articleBean.getP_status() != null && articleBean.getP_status().equals("1")) {
+                                    articleBean.setP_status("2");
+                                    articleBean.setLike_number(String.valueOf(Integer.valueOf(articleBean.getLike_number()) - 1));
+                                } else {
+                                    articleBean.setP_status("1");
+                                    articleBean.setLike_number(String.valueOf(Integer.valueOf(articleBean.getLike_number()) + 1));
+                                }
+                            } else {
+                                T.s(holder.context, msg);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                         multiTypeAdapter.notifyDataSetChanged();
                     }

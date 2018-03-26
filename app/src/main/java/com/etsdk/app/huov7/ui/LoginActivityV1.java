@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -46,6 +47,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.api.BasicCallback;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 
@@ -167,6 +170,7 @@ public class LoginActivityV1 extends ImmerseActivity implements PlatformActionLi
                     }
                     LoginControl.saveToken(data.getUser_token());
                     T.s(mActivity, "登陆成功");
+                    login(account, password);
                     //接口回调通知
                     //保存账号到数据库
                     if (huoSdkCbRecord.isChecked()) {
@@ -195,6 +199,38 @@ public class LoginActivityV1 extends ImmerseActivity implements PlatformActionLi
         httpCallbackDecode.setLoadMsg("正在登录...");
         RxVolley.post(AppApi.getUrl(AppApi.loginApi), httpParamsBuild.getHttpParams(), httpCallbackDecode);
     }
+
+    private void register(final String account, final String password) {
+        JMessageClient.register(account, password, new BasicCallback() {
+            @Override
+            public void gotResult(int i, String s) {
+                Log.i("333", "ri：" + i + "  s：" + s);
+                if (i == 0) {
+                    login(account, password);
+                }
+            }
+        });
+    }
+
+    private void login(final String account, final String password) {
+        JMessageClient.login(account, password, new BasicCallback() {
+            @Override
+            public void gotResult(int i, String s) {
+                Log.i("333", "li：" + i + "  s：" + s);
+                if (i == 801003) {
+                    register(account, password);
+                }else if (i == 0){
+                    JMessageClient.applyJoinGroup(Long.valueOf(25680755), "", new BasicCallback() {
+                        @Override
+                        public void gotResult(int i, String s) {
+                            Log.i("333", "li：" + i + "  s：" + s);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
 
     @OnClick({R.id.tv_titleLeft, R.id.tv_title_right, R.id.huo_sdk_iv_selectAccount, R.id.huo_sdk_img_show_pwd, R.id.btn_submit, R.id.tv_forgetPwd, R.id.iv_qq, R.id.iv_weixin, R.id.iv_weibo})
     public void onViewClicked(View view) {
@@ -227,7 +263,7 @@ public class LoginActivityV1 extends ImmerseActivity implements PlatformActionLi
                 ThirdLoginUtil.loginByThird(ThirdLoginUtil.LOGIN_QQ, this);
                 break;
             case R.id.iv_weibo:
-                ThirdLoginUtil.initXinNan( BuildConfig.wb_appid, BuildConfig.wb_appkey, BuildConfig.wb_directurl);
+                ThirdLoginUtil.initXinNan(BuildConfig.wb_appid, BuildConfig.wb_appkey, BuildConfig.wb_directurl);
                 ThirdLoginUtil.loginByThird(ThirdLoginUtil.LOGIN_XLWB, this);
                 break;
             case R.id.iv_weixin:
@@ -243,7 +279,7 @@ public class LoginActivityV1 extends ImmerseActivity implements PlatformActionLi
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             EventBus.getDefault().post(false);
         }
         return super.onKeyDown(keyCode, event);
@@ -302,11 +338,11 @@ public class LoginActivityV1 extends ImmerseActivity implements PlatformActionLi
 
     }
 
+
     public static void start(Context context) {
         Intent starter = new Intent(context, LoginActivityV1.class);
         context.startActivity(starter);
     }
-
     public static Intent getIntent(Context context) {
         Intent starter = new Intent(context, LoginActivityV1.class);
         return starter;

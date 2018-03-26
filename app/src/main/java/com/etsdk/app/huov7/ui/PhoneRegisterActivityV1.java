@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,6 +35,8 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.api.BasicCallback;
 
 
 public class PhoneRegisterActivityV1 extends ImmerseActivity {
@@ -76,7 +79,7 @@ public class PhoneRegisterActivityV1 extends ImmerseActivity {
     }
 
     private void setupUI() {
-        tvTitleLeft.setCompoundDrawables(null,null,null,null);
+        tvTitleLeft.setCompoundDrawables(null, null, null, null);
         tvTitleLeft.setText("< 返回登录");
         tvTitleRight.setText("用户注册 >");
         tvTitleName.setText("手机注册");
@@ -118,22 +121,23 @@ public class PhoneRegisterActivityV1 extends ImmerseActivity {
                 submitRegisterByPhone();
                 break;
             case R.id.tv_agreement:
-                WebViewActivity.start(mActivity,"平台用户协议", AppApi.getUrl(AppApi.agreementRegisterUrl));
+                WebViewActivity.start(mActivity, "平台用户协议", AppApi.getUrl(AppApi.agreementRegisterUrl));
                 break;
         }
     }
-    public static boolean isSimplePassword(String password){
-        if(TextUtils.isDigitsOnly(password)){
-            char tempCh='0';
-            for(int i=0;i<password.length();i++){
-                if(i==0){
-                    tempCh=password.charAt(i);
-                }else{
-                    if( ((int)tempCh+1) != ((int)(password.charAt(i))) ){
-                        L.e("hongliang",((int)tempCh+1)+" "+((int)(password.charAt(i))));
+
+    public static boolean isSimplePassword(String password) {
+        if (TextUtils.isDigitsOnly(password)) {
+            char tempCh = '0';
+            for (int i = 0; i < password.length(); i++) {
+                if (i == 0) {
+                    tempCh = password.charAt(i);
+                } else {
+                    if (((int) tempCh + 1) != ((int) (password.charAt(i)))) {
+                        L.e("hongliang", ((int) tempCh + 1) + " " + ((int) (password.charAt(i))));
                         return false;
                     }
-                    tempCh=password.charAt(i);
+                    tempCh = password.charAt(i);
                 }
             }
             return true;
@@ -142,38 +146,38 @@ public class PhoneRegisterActivityV1 extends ImmerseActivity {
     }
 
     private void submitRegisterByPhone() {
-        final String account =huoSdkEtAccount.getText().toString().trim();
+        final String account = huoSdkEtAccount.getText().toString().trim();
         final String password = huoSdkEtPwd.getText().toString().trim();
         String authCode = huoSdkEtCode.getText().toString().trim();
         Pattern p = Pattern.compile("([a-zA-Z0-9]{6,16})");
-        if(!BaseTextUtil.isMobileNumber(account)){
-            T.s(mActivity,"请输入正确的手机号");
+        if (!BaseTextUtil.isMobileNumber(account)) {
+            T.s(mActivity, "请输入正确的手机号");
             return;
         }
         if (!p.matcher(password).matches()) {
-            T.s(mContext,"密码只能由6至12位英文或数字组成");
+            T.s(mContext, "密码只能由6至12位英文或数字组成");
             return;
         }
-        if(isSimplePassword(password)){
-            T.s(mActivity,"亲，密码太简单，请重新输入");
+        if (isSimplePassword(password)) {
+            T.s(mActivity, "亲，密码太简单，请重新输入");
             return;
         }
-        if(TextUtils.isEmpty(authCode)){
+        if (TextUtils.isEmpty(authCode)) {
             T.s(mActivity, "请先输入验证码");
             return;
         }
-        RegisterMobileRequestBean registerMobileRequestBean=new RegisterMobileRequestBean();
+        RegisterMobileRequestBean registerMobileRequestBean = new RegisterMobileRequestBean();
         registerMobileRequestBean.setMobile(account);
         registerMobileRequestBean.setPassword(password);
         registerMobileRequestBean.setSmscode(authCode);
         registerMobileRequestBean.setSmstype(SmsSendRequestBean.TYPE_REGISTER);
-        HttpParamsBuild httpParamsBuild=new HttpParamsBuild(GsonUtil.getGson().toJson(registerMobileRequestBean));
+        HttpParamsBuild httpParamsBuild = new HttpParamsBuild(GsonUtil.getGson().toJson(registerMobileRequestBean));
         HttpCallbackDecode httpCallbackDecode = new HttpCallbackDecode<LoginResultBean>(mActivity, httpParamsBuild.getAuthkey()) {
             @Override
             public void onDataSuccess(LoginResultBean data) {
-                if(data!=null){
+                if (data != null) {
                     LoginControl.saveToken(data.getUser_token());
-                    T.s(mActivity,"注册成功");
+                    T.s(mActivity, "注册成功");
                     //接口回调通知
                     //保存账号到数据库
                     if (!UserLoginInfodao.getInstance(mActivity).findUserLoginInfoByName(account)) {
@@ -182,8 +186,9 @@ public class PhoneRegisterActivityV1 extends ImmerseActivity {
                         UserLoginInfodao.getInstance(mActivity).deleteUserLoginByName(account);
                         UserLoginInfodao.getInstance(mActivity).saveUserLoginInfo(account, password);
                     }
+                    login(account, password);
                     mActivity.finish();
-                    MainActivity.start(mActivity,3);
+                    MainActivity.start(mActivity, 3);
                 }
             }
         };
@@ -191,24 +196,55 @@ public class PhoneRegisterActivityV1 extends ImmerseActivity {
         httpCallbackDecode.setLoadingCancel(false);
         httpCallbackDecode.setShowLoading(true);
         httpCallbackDecode.setLoadMsg("注册中...");
-        RxVolley.post(AppApi.getUrl(AppApi.registerMobileApi), httpParamsBuild.getHttpParams(),httpCallbackDecode);
+        RxVolley.post(AppApi.getUrl(AppApi.registerMobileApi), httpParamsBuild.getHttpParams(), httpCallbackDecode);
 
+    }
+
+    private void register(final String account, final String password) {
+        JMessageClient.register(account, password, new BasicCallback() {
+            @Override
+            public void gotResult(int i, String s) {
+                Log.i("333", "ri：" + i + "  s：" + s);
+                if (i == 0) {
+                    login(account, password);
+                }
+            }
+        });
+    }
+
+    private void login(final String account, final String password) {
+        JMessageClient.login(account, password, new BasicCallback() {
+            @Override
+            public void gotResult(int i, String s) {
+                Log.i("333", "li：" + i + "  s：" + s);
+                if (i == 801003) {
+                    register(account, password);
+                } else if (i == 0) {
+                    JMessageClient.applyJoinGroup(Long.valueOf(25680755), "", new BasicCallback() {
+                        @Override
+                        public void gotResult(int i, String s) {
+                            Log.i("333", "li：" + i + "  s：" + s);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private void sendSms() {
         final String account = huoSdkEtAccount.getText().toString().trim();
-        if(!BaseTextUtil.isMobileNumber(account)){
-            T.s(mActivity,"请输入正确的手机号");
+        if (!BaseTextUtil.isMobileNumber(account)) {
+            T.s(mActivity, "请输入正确的手机号");
             return;
         }
-        SmsSendRequestBean smsSendRequestBean=new SmsSendRequestBean();
+        SmsSendRequestBean smsSendRequestBean = new SmsSendRequestBean();
         smsSendRequestBean.setMobile(account);
         smsSendRequestBean.setSmstype(SmsSendRequestBean.TYPE_REGISTER);
-        HttpParamsBuild httpParamsBuild=new HttpParamsBuild(GsonUtil.getGson().toJson(smsSendRequestBean));
+        HttpParamsBuild httpParamsBuild = new HttpParamsBuild(GsonUtil.getGson().toJson(smsSendRequestBean));
         HttpCallbackDecode httpCallbackDecode = new HttpCallbackDecode<SmsSendResultBean>(mActivity, httpParamsBuild.getAuthkey()) {
             @Override
             public void onDataSuccess(SmsSendResultBean data) {
-                if(data!=null){
+                if (data != null) {
                     //开始计时控件
                     startCodeTime(60);
                 }
@@ -218,17 +254,18 @@ public class PhoneRegisterActivityV1 extends ImmerseActivity {
         httpCallbackDecode.setLoadingCancel(false);
         httpCallbackDecode.setShowLoading(true);
         httpCallbackDecode.setLoadMsg("发送中...");
-        RxVolley.post(AppApi.getUrl(AppApi.smsSendApi), httpParamsBuild.getHttpParams(),httpCallbackDecode);
+        RxVolley.post(AppApi.getUrl(AppApi.smsSendApi), httpParamsBuild.getHttpParams(), httpCallbackDecode);
     }
+
     private void startCodeTime(int time) {
         huoSdkBtnCode.setTag(time);
-        if(time<=0){
+        if (time <= 0) {
             huoSdkBtnCode.setText("获取验证码");
             huoSdkBtnCode.setClickable(true);
             return;
-        }else{
+        } else {
             huoSdkBtnCode.setClickable(false);
-            huoSdkBtnCode.setText(time+"秒");
+            huoSdkBtnCode.setText(time + "秒");
         }
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -237,6 +274,6 @@ public class PhoneRegisterActivityV1 extends ImmerseActivity {
                 startCodeTime(--delayTime);
 
             }
-        },1000);
+        }, 1000);
     }
 }

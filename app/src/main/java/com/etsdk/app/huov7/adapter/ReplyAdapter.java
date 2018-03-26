@@ -2,6 +2,7 @@ package com.etsdk.app.huov7.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +42,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ReplyViewHol
 
     @Override
     public ReplyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_reply, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_comment, parent, false);
         return new ReplyViewHolder(view);
     }
 
@@ -52,9 +53,9 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ReplyViewHol
         holder.tower_tv.setText("第" + String.valueOf(position + 2) + "楼");
         holder.time_tv.setText(TimeUtils.getTime(Long.valueOf(comments.get(position).getTime())));
         Glide.with(context).load(SdkConstant.BASE_URL + comments.get(position).getPortrait()).placeholder(R.mipmap.ic_launcher).into(holder.head_img);
-//        adapter2 = new ReplyAdapter2(context,comments.get(position).getReply());
-//        holder.item_recycle.setLayoutManager(new LinearLayoutManager(context));
-//        holder.item_recycle.setAdapter(adapter2);
+        adapter2 = new ReplyAdapter2(context,comments.get(position).getReply());
+        holder.item_recycle.setLayoutManager(new LinearLayoutManager(context));
+        holder.item_recycle.setAdapter(adapter2);
         holder.item_ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,7 +87,6 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ReplyViewHol
             name_tv = itemView.findViewById(R.id.name_tv);
             read_tv = itemView.findViewById(R.id.read_tv);
             item_con = itemView.findViewById(R.id.item_con);
-            tower_tv = itemView.findViewById(R.id.tower_tv);
             time_tv = itemView.findViewById(R.id.time_tv);
             item_recycle = itemView.findViewById(R.id.item_recycle);
         }

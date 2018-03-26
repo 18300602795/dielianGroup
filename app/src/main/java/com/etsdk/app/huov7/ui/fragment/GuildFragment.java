@@ -38,7 +38,7 @@ public class GuildFragment extends AutoLazyFragment implements AdvRefreshListene
     RecyclerView fragment_recycle;
     @BindView(R.id.swrefresh)
     SwipeRefreshLayout swrefresh;
-    private MultiTypeAdapter multiTypeAdapter;
+    //    private MultiTypeAdapter multiTypeAdapter;
     Items items = new Items();
     BaseRefreshLayout baseRefreshLayout;
     private boolean requestTopSplit = true;//是否需要顶部分割线
@@ -59,11 +59,11 @@ public class GuildFragment extends AutoLazyFragment implements AdvRefreshListene
 
     private void setupUI() {
         baseRefreshLayout = new MVCSwipeRefreshHelper(swrefresh);
-        multiTypeAdapter = new MultiTypeAdapter(items);
-        multiTypeAdapter.applyGlobalMultiTypePool();
+        MultiTypeAdapter multiTypeAdapter = new MultiTypeAdapter(items);
+//        multiTypeAdapter.applyGlobalMultiTypePool();
         multiTypeAdapter.register(GuildHeader.class, new GuildHeaderViewProvider());
         multiTypeAdapter.register(GameBean.class, new GameItemViewProvider2());
-        multiTypeAdapter.notifyDataSetChanged();
+//        multiTypeAdapter.notifyDataSetChanged();
         fragment_recycle.setLayoutManager(new LinearLayoutManager(getActivity()));
         baseRefreshLayout.setAdapter(multiTypeAdapter);
         baseRefreshLayout.setAdvRefreshListener(this);

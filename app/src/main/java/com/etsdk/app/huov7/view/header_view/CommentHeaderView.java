@@ -84,7 +84,6 @@ public class CommentHeaderView extends RelativeLayout {
         mRootView = LayoutInflater.from(mContext).inflate(R.layout.comment_header, this);
         name_tv = mRootView.findViewById(R.id.name_tv);
         read_tv = mRootView.findViewById(R.id.read_tv);
-        tower_tv = mRootView.findViewById(R.id.tower_tv);
         time_tv = mRootView.findViewById(R.id.time_tv);
         title_tv = mRootView.findViewById(R.id.title_tv);
         cont_tv = mRootView.findViewById(R.id.cont_tv);
@@ -98,7 +97,6 @@ public class CommentHeaderView extends RelativeLayout {
         img_recycle.setLayoutManager(new LinearLayoutManager(mContext));
         if (!StringUtils.isEmpty(argumentBean.getImage_url())) {
             String pictures = argumentBean.getImage_url();
-            pictures = pictures.substring(1, pictures.length() - 1);
             L.i("333", "pictures：" + pictures);
             imgs = pictures.split(",");
         }

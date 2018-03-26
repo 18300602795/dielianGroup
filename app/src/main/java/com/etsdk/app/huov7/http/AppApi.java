@@ -107,6 +107,7 @@ public class AppApi {
     public static final String passwordFindApi="user/passwd/find";
     public static final String phoneBindApi ="user/phone/bind";
     public static final String userDetailApi="user/detail";
+    public static final String userDetailApi2="user/app_detail";
     public static final String nickNameUpdateApi="user/info/update";
     public static final String addressDetailApi="user/address/detail";
     public static final String userMsgDetailApi="user/msg/detail";

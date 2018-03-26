@@ -2,6 +2,7 @@ package com.etsdk.app.huov7.base;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 
@@ -20,6 +21,10 @@ import com.liang530.manager.AppManager;
 
 public class ImmerseActivity extends BaseActivity {
     View huo_sdk_rl_title;//标题栏
+    protected int mWidth;
+    protected int mHeight;
+    protected float mDensity;
+    protected int mDensityDpi;
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
@@ -33,6 +38,12 @@ public class ImmerseActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SwipeBackHelper.onCreate(this);
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        mDensity = dm.density;
+        mDensityDpi = dm.densityDpi;
+        mWidth = dm.widthPixels;
+        mHeight = dm.heightPixels;
         if(this instanceof StartActivity){//启动页进行重新初始化
             Intent intent=new Intent(this,HuoSdkService.class);
             startService(intent);

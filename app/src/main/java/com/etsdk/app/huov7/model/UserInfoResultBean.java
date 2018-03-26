@@ -9,15 +9,24 @@ public class UserInfoResultBean {
     private String nickname;//	STRING	昵称	昵称长城
     private String myintegral;//	FLOAT	我的积分	12
     private String couponcnt;//	INT		12
-    private String giftcnt;	//INT	礼包数量	12
+    private String giftcnt;    //INT	礼包数量	12
     private String gmgamecnt;//	INT	游戏币游戏数量	（代金券数量）
-    private String newmsg;	//INT	是否有新消息	2 有 1 没有 空 没有
-    private String mobile;	//String 手机号
-    private String email;	//String 邮箱
-    private String agent_id;	//String 渠道
-    private float ptbcnt;	// 平台币数量
+    private String newmsg;    //INT	是否有新消息	2 有 1 没有 空 没有
+    private String mobile;    //String 手机号
+    private String email;    //String 邮箱
+    private String agent_id;    //String 渠道
+    private float ptbcnt;    // 平台币数量
     private String name;    //String 渠道名字
     private String give_integral; // 今日积分
+    private String position;
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
     public String getGive_integral() {
         return give_integral;

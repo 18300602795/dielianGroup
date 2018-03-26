@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -25,7 +24,6 @@ import com.etsdk.app.huov7.ui.dialog.UpdateTextDialogUtil;
 import com.game.sdk.HuosdkManager;
 import com.game.sdk.domain.BaseRequestBean;
 import com.game.sdk.http.HttpCallbackDecode;
-import com.game.sdk.http.HttpNoLoginCallbackDecode;
 import com.game.sdk.http.HttpParamsBuild;
 import com.game.sdk.listener.OnInitSdkListener;
 import com.game.sdk.log.L;
@@ -49,6 +47,9 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.android.api.model.UserInfo;
+import cn.jpush.im.api.BasicCallback;
 
 public class AccountManageActivity extends ImmerseActivity {
 
@@ -91,9 +92,6 @@ public class AccountManageActivity extends ImmerseActivity {
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         setupUI();
-        updateHeadImage();
-        getData();
-
     }
 
     private void setupUI() {
@@ -252,45 +250,12 @@ public class AccountManageActivity extends ImmerseActivity {
 //                T.s(mContext, "上传成功");
 //            }
 //        });
-
-        NetRequest.request(this).setParams(httpParams).post("https://api.idielian.com/api/v7/bbs/list", new HttpJsonCallBackDialog<AddressList>() {
+        JMessageClient.updateUserAvatar(file, new BasicCallback() {
             @Override
-            public void onDataSuccess(AddressList data) {
-                T.s(mContext, "上传成功");
-            }
-
-            @Override
-            public void onFailure(VolleyError error) {
-                super.onFailure(error);
-                T.s(mContext, "上传失败：" + error.toString());
+            public void gotResult(int i, String s) {
+                L.i("333", "修改头像：i" + i + "  s:" + s);
             }
         });
-    }
-    public void getData() {
-        L.i("333", "获取数据：https://api.idielian.com/api/v7/bbs/list");
-        final BaseRequestBean baseRequestBean = new BaseRequestBean();
-        HttpParamsBuild httpParamsBuild = new HttpParamsBuild(GsonUtil.getGson().toJson(baseRequestBean));
-        HttpNoLoginCallbackDecode httpCallbackDecode = new HttpNoLoginCallbackDecode<UserInfoResultBean>(mContext, httpParamsBuild.getAuthkey()) {
-            @Override
-            public void onDataSuccess(UserInfoResultBean data) {
-
-            }
-
-            @Override
-            public void onFailure(String code, String msg) {
-                Log.i("333", "msg：" + msg);
-            }
-        };
-        httpCallbackDecode.setShowTs(true);
-        httpCallbackDecode.setLoadingCancel(false);
-        httpCallbackDecode.setShowLoading(false);
-        RxVolley.post("https://api.idielian.com/api/v7/bbs/list", httpParamsBuild.getHttpParams(), httpCallbackDecode);
-    }
-
-
-    private void updateHeadImage() {
-        HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.userHeadImgApi);
-
         NetRequest.request(this).setParams(httpParams).post("https://api.idielian.com/api/v7/bbs/list", new HttpJsonCallBackDialog<AddressList>() {
             @Override
             public void onDataSuccess(AddressList data) {
@@ -313,6 +278,14 @@ public class AccountManageActivity extends ImmerseActivity {
                 if (tvNickName.getText().toString().trim().equals(content.trim())) {
                     return;
                 }
+                UserInfo userInfo = JMessageClient.getMyInfo();
+                userInfo.setNickname(content);
+                JMessageClient.updateMyInfo(UserInfo.Field.nickname, userInfo, new BasicCallback() {
+                    @Override
+                    public void gotResult(int i, String s) {
+                        L.i("333", "修改昵称：i" + i + "  s:" + s);
+                    }
+                });
                 tvNickName.setText(content);
                 tvNickName.setTag(content);
                 submitUpdateNickName(content);
@@ -322,6 +295,7 @@ public class AccountManageActivity extends ImmerseActivity {
             public void cancel() {
             }
         });
+
     }
 
     /**
