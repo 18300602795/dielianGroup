@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +21,7 @@ import com.etsdk.app.huov7.base.ImmerseActivity;
 import com.etsdk.app.huov7.chat.ui.ChatActivity;
 import com.etsdk.app.huov7.model.StartupResultBean;
 import com.etsdk.app.huov7.ui.fragment.ChatFragment;
-import com.etsdk.app.huov7.ui.fragment.GuildFragment;
+import com.etsdk.app.huov7.ui.fragment.HomeFragment;
 import com.etsdk.app.huov7.ui.fragment.HouseFragment;
 import com.etsdk.app.huov7.ui.fragment.MineFragment;
 import com.etsdk.app.huov7.ui.fragment.NewsListFragment;
@@ -64,22 +65,32 @@ public class MainActivity2 extends ImmerseActivity {
     LinearLayout group_ll;
     @BindView(R.id.group_tv)
     TextView group_tv;
+    @BindView(R.id.group_iv)
+    ImageView group_iv;
     @BindView(R.id.event_ll)
     LinearLayout event_ll;
     @BindView(R.id.event_tv)
     TextView event_tv;
+    @BindView(R.id.event_iv)
+    ImageView event_iv;
     @BindView(R.id.chat_ll)
     LinearLayout chat_ll;
     @BindView(R.id.chat_tv)
     TextView chat_tv;
+    @BindView(R.id.chat_iv)
+    ImageView chat_iv;
     @BindView(R.id.house_ll)
     LinearLayout house_ll;
     @BindView(R.id.house_tv)
     TextView house_tv;
+    @BindView(R.id.house_iv)
+    ImageView house_iv;
     @BindView(R.id.mine_ll)
     LinearLayout mine_ll;
     @BindView(R.id.mine_tv)
     TextView mine_tv;
+    @BindView(R.id.mine_iv)
+    ImageView mine_iv;
     List<Fragment> fragmentList = new ArrayList<>();
     private GroupHomeAdapter mAdapter;
     private List<TextView> textViews;
@@ -234,7 +245,7 @@ public class MainActivity2 extends ImmerseActivity {
         textViews.add(chat_tv);
         textViews.add(event_tv);
         textViews.add(mine_tv);
-        fragmentList.add(new GuildFragment());
+        fragmentList.add(new HomeFragment());
         fragmentList.add(new HouseFragment());
         fragmentList.add(new ChatFragment());
         fragmentList.add(NewsListFragment.newInstance("2", null));
@@ -332,12 +343,34 @@ public class MainActivity2 extends ImmerseActivity {
 
     private void clear() {
         for (int i = 0; i < textViews.size(); i++) {
-            textViews.get(i).setTextColor(getResources().getColor(R.color.bg_pressed));
+            textViews.get(i).setTextColor(getResources().getColor(R.color.black));
         }
+        group_iv.setImageResource(R.mipmap.tab_icon_tj_us);
+        house_iv.setImageResource(R.mipmap.tab_icon_game_us);
+        chat_iv.setImageResource(R.mipmap.zixun_us);
+        event_iv.setImageResource(R.mipmap.tab_icon_fuli_us);
+        mine_iv.setImageResource(R.mipmap.tab_icon_my_us);
     }
 
     private void show(int position) {
         textViews.get(position).setTextColor(getResources().getColor(R.color.text_green));
+        switch (position){
+            case 0:
+                group_iv.setImageResource(R.mipmap.tab_icon_tj_s);
+                break;
+            case 1:
+                house_iv.setImageResource(R.mipmap.tab_icon_game_s);
+                break;
+            case 2:
+                chat_iv.setImageResource(R.mipmap.zixun_s);
+                break;
+            case 3:
+                event_iv.setImageResource(R.mipmap.tab_icon_fuli_s);
+                break;
+            case 4:
+                mine_iv.setImageResource(R.mipmap.tab_icon_my_s);
+                break;
+        }
     }
 
     // 退出时间

@@ -7,7 +7,7 @@
         android:id="@+id/huo_sdk_lv_select_account"
         android:layout_width="match_parent"
         android:layout_height="225dp"
-        android:divider="@color/tranparent"
+        android:divider="@color/transparent"
         android:listSelector="@null"
         >
     </ListView>

@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.etsdk.app.huov7.R;
 import com.etsdk.app.huov7.base.AutoLazyFragment;
+import com.etsdk.app.huov7.ui.DownloadManagerActivity;
+import com.etsdk.app.huov7.ui.SearchActivity;
 import com.etsdk.app.huov7.util.ColorUtil;
 import com.etsdk.app.huov7.util.StringUtils;
 import com.etsdk.app.huov7.view.StickyNavLayout;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * Created by Administrator on 2018\2\28 0028.
@@ -62,15 +65,15 @@ public class HomeFragment extends AutoLazyFragment implements StickyNavLayout.St
     private void initDate() {
         sticky.setStickyCallBack(this);
         fragments = new ArrayList<>();
-        fragments.add(new MineFragment());
-        mAdapter = new FragmentPagerAdapter(getActivity().getSupportFragmentManager()) {
+        fragments.add(new GuildFragment());
+        mAdapter = new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
             public int getCount() {
                 return fragments.size();
             }
 
             @Override
-            public Fragment getItem(int position)  {
+            public Fragment getItem(int position) {
                 return fragments.get(position);
             }
 
@@ -172,12 +175,24 @@ public class HomeFragment extends AutoLazyFragment implements StickyNavLayout.St
         } else {
             alpha = 0;
         }
-        title_bar.setBackgroundColor(ColorUtil.getNewColorByStartEndColor(getActivity(), alpha, R.color.transparent, R.color.white));
+        title_bar.setBackgroundColor(ColorUtil.getNewColorByStartEndColor(getActivity(), alpha, R.color.transparent, R.color.bg_blue));
         ObjectAnimator.ofFloat(title_tv, "alpha", alpha).setDuration(0).start();
         if (alpha > 0.5) {
 //            title_menu.setImageResource(R.drawable.icon_home_page_more_dark);
         } else {
 //            title_menu.setImageResource(R.drawable.icon_home_page_more);
+        }
+    }
+
+    @OnClick({R.id.title_search, R.id.title_menu})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.title_search:
+                SearchActivity.start(mContext);
+                break;
+            case R.id.title_menu:
+                DownloadManagerActivity.start(mContext);
+                break;
         }
     }
 }

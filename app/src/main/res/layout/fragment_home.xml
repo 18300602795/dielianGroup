@@ -47,7 +47,7 @@
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/tranparent"
+        android:background="@color/transparent"
         android:orientation="horizontal"
         android:paddingBottom="10dp"
         android:paddingTop="20dp">
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingLeft="15dp"
-            android:src="@mipmap/sysousuo" />
+            android:src="@mipmap/icon_home_page_search" />
 
         <TextView
             android:id="@+id/title_tv"
@@ -67,7 +67,7 @@
             android:alpha="0"
             android:gravity="center"
             android:text="蝶恋公会"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="16sp" />
 
         <ImageView

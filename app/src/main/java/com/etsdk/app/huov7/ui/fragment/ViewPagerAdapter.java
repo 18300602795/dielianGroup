@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.game.sdk.log.L;
+
 import java.util.List;
 
 /**
@@ -47,9 +49,8 @@ public class ViewPagerAdapter extends PagerAdapter {
                 -1, -1);
         img.setLayoutParams(layoutParams);
         img.setScaleType(ImageView.ScaleType.FIT_XY);
-        final int listBean = listbean.get(position % listbean.size());
+         int listBean = listbean.get(position % listbean.size());
         img.setImageResource(listBean);
-
         container.addView(img);
         return img;
     }

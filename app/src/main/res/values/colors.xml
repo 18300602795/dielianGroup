@@ -68,7 +68,7 @@
     <color name="gray1">#C3C3C3</color>
     <color name="green1">#199F5B</color>
     <color name="charge_green">#58a522</color>
-    <color name="tranparent">#00000000</color>
+    <color name="transparent">#00000000</color>
     <color name="red1">#CC3636</color>
     <color name="orange_5">#CC4300</color>
     <color name="greens">#00c3ba</color>
@@ -92,7 +92,6 @@
     <color name="cody_blg1">#49a7e6</color>
     <color name="gray2">#DDDDDD</color>
     <color name="white_ab">#ffffff</color>
-    <color name="transparent">#ffffff</color>
     <color name="blue3">#21A6EF</color>
     <color name="greenss">#00c3ba</color>
     <color name="blue1">#8d8ff6</color>

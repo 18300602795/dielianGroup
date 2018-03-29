@@ -11,13 +11,17 @@ import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.etsdk.app.huov7.R;
+import com.etsdk.app.huov7.model.GameBeanList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 /**
@@ -27,13 +31,35 @@ import com.etsdk.app.huov7.R;
 public class HunterHeaderView extends RelativeLayout {
     View mRootView;
     private Context mContext;
+    @BindView(R.id.game_ll)
+    LinearLayout game_ll;
+    AnimationDrawable animationDrawable;
+    @BindView(R.id.tv_notice)
+    TextSwitcher tv_notice;
+    String[] mAdvertisements;
+    final int HOME_AD_RESULT = 1;
+    int mSwitcherCount = 0;
+    GameBeanList gameBeanList;
 
-    private ImageView img_notice;
-    private AnimationDrawable animationDrawable;
-    private TextSwitcher tv_notice;
-    private String[] mAdvertisements;
-    private final int HOME_AD_RESULT = 1;
-    private int mSwitcherCount = 0;
+    public void setGameBeanList(GameBeanList gameBeanList) {
+        this.gameBeanList = gameBeanList;
+        game_ll.removeAllViews();
+        if (gameBeanList.getData().getList().size() <= 10) {
+            for (int i = 0; i < gameBeanList.getData().getList().size(); i++) {
+                GameItemView gameItemView = new GameItemView(mContext);
+                gameItemView.setData(gameBeanList.getData().getList().get(i));
+                game_ll.addView(gameItemView);
+            }
+            game_ll.addView(new MoreItemView(mContext));
+        } else {
+            for (int i = 0; i < 10; i++) {
+                GameItemView gameItemView = new GameItemView(mContext);
+                gameItemView.setData(gameBeanList.getData().getList().get(i));
+                game_ll.addView(gameItemView);
+            }
+            game_ll.addView(new MoreItemView(mContext));
+        }
+    }
 
     private Handler mHandler = new Handler() {
         @Override
@@ -78,7 +104,7 @@ public class HunterHeaderView extends RelativeLayout {
 
     private void initView() {
         mRootView = LayoutInflater.from(mContext).inflate(R.layout.hunter_header, this);
-        tv_notice = (TextSwitcher) mRootView.findViewById(R.id.tv_notice);
+        ButterKnife.bind(mRootView);
         tv_notice.setFactory(new ViewSwitcher.ViewFactory() {
             // 这里用来创建内部的视图，这里创建TextView，用来显示文字
             public View makeView() {

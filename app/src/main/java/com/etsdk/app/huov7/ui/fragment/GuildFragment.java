@@ -11,26 +11,21 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.etsdk.app.huov7.R;
-import com.etsdk.app.huov7.base.AileApplication;
 import com.etsdk.app.huov7.base.AutoLazyFragment;
 import com.etsdk.app.huov7.http.AppApi;
 import com.etsdk.app.huov7.model.GameBean;
 import com.etsdk.app.huov7.model.GameBeanList;
-import com.etsdk.app.huov7.model.GuildHeader;
 import com.etsdk.app.huov7.provider.GameItemViewProvider2;
 import com.etsdk.app.huov7.provider.GuildHeaderViewProvider2;
-import com.etsdk.app.huov7.util.JsonUtil;
 import com.etsdk.app.huov7.util.StringUtils;
 import com.etsdk.hlrefresh.AdvRefreshListener;
 import com.etsdk.hlrefresh.BaseRefreshLayout;
 import com.etsdk.hlrefresh.MVCSwipeRefreshHelper;
 import com.kymjs.rxvolley.client.HttpParams;
-import com.liang530.log.L;
 import com.liang530.rxvolley.HttpJsonCallBackDialog;
 import com.liang530.rxvolley.NetRequest;
 
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +72,7 @@ public class GuildFragment extends AutoLazyFragment implements AdvRefreshListene
     private void setupUI() {
         baseRefreshLayout = new MVCSwipeRefreshHelper(swrefresh);
         MultiTypeAdapter multiTypeAdapter = new MultiTypeAdapter(items);
-        multiTypeAdapter.register(GuildHeader.class, new GuildHeaderViewProvider2());
+        multiTypeAdapter.register(GameBeanList.class, new GuildHeaderViewProvider2());
         multiTypeAdapter.register(GameBean.class, new GameItemViewProvider2());
         fragment_recycle.setLayoutManager(new LinearLayoutManager(getActivity()));
         baseRefreshLayout.setAdapter(multiTypeAdapter);
@@ -109,6 +104,12 @@ public class GuildFragment extends AutoLazyFragment implements AdvRefreshListene
                 abc.sendEmptyMessageDelayed(0, 4000);
             }
         });
+        imgs = new ArrayList<>();
+        imgs.add(R.mipmap.item1);
+        imgs.add(R.mipmap.item2);
+        imgs.add(R.mipmap.item3);
+        showBanner();
+        startScrollView();
     }
 
     Handler abc = new Handler() {
@@ -125,13 +126,13 @@ public class GuildFragment extends AutoLazyFragment implements AdvRefreshListene
      * 开始轮播图片
      */
     private void startScrollView() {
-        if (pagerAdapter == null) {
-            pagerAdapter = new ViewPagerAdapter(imgs, getActivity());
-            hunter_pager.setAdapter(pagerAdapter);
-            hunter_pager.setCurrentItem(10000 * imgs.size());
-        } else {
-            pagerAdapter.notifyDataSetChanged();
-        }
+//        if (pagerAdapter == null) {
+        pagerAdapter = new ViewPagerAdapter(imgs, getActivity());
+        hunter_pager.setAdapter(pagerAdapter);
+        hunter_pager.setCurrentItem(10000 * imgs.size());
+//        } else {
+//            pagerAdapter.notifyDataSetChanged();
+//        }
         // 实现轮播效果
         abc.sendEmptyMessageDelayed(0, 4000);
     }
@@ -160,8 +161,8 @@ public class GuildFragment extends AutoLazyFragment implements AdvRefreshListene
         }
     }
 
-
-    public void getPageData(final int requestPageNo, final Items resultItems) {
+    @Override
+    public void getPageData(final int requestPageNo) {
         HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.gameListApi);
         httpParams.put("hot", hot);
         httpParams.put("isnew", isnew);
@@ -183,6 +184,8 @@ public class GuildFragment extends AutoLazyFragment implements AdvRefreshListene
                     if (isnew == 1 || hot == 1) {//热门和新游只要20个
                         maxPage = 1;
                     }
+                    Items resultItems = new Items();
+                    resultItems.add(data);
                     resultItems.addAll(data.getData().getList());
                     baseRefreshLayout.resultLoadData(items, resultItems, maxPage);
                 } else {
@@ -202,63 +205,57 @@ public class GuildFragment extends AutoLazyFragment implements AdvRefreshListene
         });
     }
 
-    @Override
-    public void getPageData(final int requestPageNo) {
-        imgs = new ArrayList<>();
-        imgs.add(R.mipmap.item1);
-        imgs.add(R.mipmap.item2);
-        imgs.add(R.mipmap.item3);
-        showBanner();
-        startScrollView();
-        if (requestPageNo != 1) {
-            Items resultItems = new Items();
-            getPageData(requestPageNo, resultItems);
-            return;
-        }
-        HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.union);
-        //成功，失败，null数据
-        L.e("333", "url：" + AppApi.getUrl(AppApi.union));
-        NetRequest.request(this).setParams(httpParams).get(AppApi.getUrl(AppApi.union), new HttpJsonCallBackDialog<String>() {
-            @Override
-            public void onDataSuccess(String data) {
-                L.e("333", "data：" + data);
-            }
-
-            @Override
-            public void onJsonSuccess(int code, String msg, String data) {
-                L.e("333", "code：" + code + "msg：" + msg + "data：" + data);
-                try {
-                    JSONObject jsonObject = new JSONObject(data);
-                    int code2 = jsonObject.getInt("code");
-                    String data2 = jsonObject.getString("data");
-                    L.e("333", "data2：" + data2);
-                    GuildHeader header = JsonUtil.parse(data2, GuildHeader.class);
-                    L.e("333", "name：" + header.getGuild().get(0).getName());
-                    AileApplication.groupId = header.getGuild().get(0).getId();
-                    if (code2 == 200) {
-                        Items resultItems = new Items();
-                        resultItems.add(header);
-                        baseRefreshLayout.resultLoadData(items, resultItems, 1);
-                        getPageData(requestPageNo, resultItems);
-                    } else {
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Items resultItems = new Items();
-                    resultItems.add(new GuildHeader());
-                    baseRefreshLayout.resultLoadData(items, resultItems, 1);
-                    getPageData(requestPageNo, resultItems);
-                }
-
-            }
-
-            @Override
-            public void onFailure(int errorNo, String strMsg, String completionInfo) {
-                L.e("333", "code：" + errorNo + "msg：" + strMsg + "data：" + completionInfo);
-            }
-
-        });
-    }
+//    @Override
+//    public void getPageData(final int requestPageNo) {
+//        if (requestPageNo != 1) {
+//            Items resultItems = new Items();
+//            getPageData(requestPageNo, resultItems);
+//            return;
+//        }
+//        HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.union);
+//        //成功，失败，null数据
+//        L.e("333", "url：" + AppApi.getUrl(AppApi.union));
+//        NetRequest.request(this).setParams(httpParams).get(AppApi.getUrl(AppApi.union), new HttpJsonCallBackDialog<String>() {
+//            @Override
+//            public void onDataSuccess(String data) {
+//                L.e("333", "data：" + data);
+//            }
+//
+//            @Override
+//            public void onJsonSuccess(int code, String msg, String data) {
+//                L.e("333", "code：" + code + "msg：" + msg + "data：" + data);
+//                try {
+//                    JSONObject jsonObject = new JSONObject(data);
+//                    int code2 = jsonObject.getInt("code");
+//                    String data2 = jsonObject.getString("data");
+//                    L.e("333", "data2：" + data2);
+//                    GuildHeader header = JsonUtil.parse(data2, GuildHeader.class);
+//                    L.e("333", "name：" + header.getGuild().get(0).getName());
+//                    AileApplication.groupId = header.getGuild().get(0).getId();
+//                    if (code2 == 200) {
+//                        Items resultItems = new Items();
+//                        resultItems.add(header);
+//                        baseRefreshLayout.resultLoadData(items, resultItems, 1);
+//                        getPageData(requestPageNo, resultItems);
+//                    } else {
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    Items resultItems = new Items();
+//                    resultItems.add(new GuildHeader());
+//                    baseRefreshLayout.resultLoadData(items, resultItems, 1);
+//                    getPageData(requestPageNo, resultItems);
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onFailure(int errorNo, String strMsg, String completionInfo) {
+//                L.e("333", "code：" + errorNo + "msg：" + strMsg + "data：" + completionInfo);
+//            }
+//
+//        });
+//    }
 
 
     @Override

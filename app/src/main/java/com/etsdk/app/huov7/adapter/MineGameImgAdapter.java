@@ -40,7 +40,7 @@ public class MineGameImgAdapter extends RecyclerView.Adapter<MineGameImgAdapter.
 //            GlideDisplay.display(holder.ivGameImg,gameBean.getIcon(),R.mipmap.ic_launcher);
             Glide.with(holder.context).load(gameBean.getIcon()).placeholder(R.mipmap.ic_launcher).into(holder.ivGameImg);
         }else{//是空白占位
-            holder.ivGameImg.setImageResource(R.color.tranparent);
+            holder.ivGameImg.setImageResource(R.color.transparent);
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

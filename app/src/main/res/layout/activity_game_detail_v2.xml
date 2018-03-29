@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@color/tranparent"
+            android:background="@color/transparent"
             app:contentScrim="@color/bg_blue"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -179,7 +179,8 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="85dp"
-                    android:src="@mipmap/btn_charge_round" />
+                    android:src="@mipmap/btn_charge_round"
+                    android:visibility="gone" />
 
                 <ImageView
                     android:id="@+id/iv_discount"

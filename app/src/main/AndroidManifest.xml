@@ -436,6 +436,12 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
+        <!--游戏页面 !-->
+        <activity
+            android:name=".ui.MainGameActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name="com.etsdk.app.huov7.ui.ForgetPwdActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
