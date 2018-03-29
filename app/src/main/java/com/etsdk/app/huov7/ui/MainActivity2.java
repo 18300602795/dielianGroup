@@ -32,7 +32,6 @@ import com.game.sdk.log.L;
 import com.jaeger.library.StatusBarUtil;
 import com.jude.swipbackhelper.SwipeBackHelper;
 import com.liang530.log.T;
-import com.liang530.views.imageview.roundedimageview.RoundedImageView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -61,45 +60,28 @@ public class MainActivity2 extends ImmerseActivity {
 //    StickyNavLayout sticky;
     @BindView(R.id.id_stickynavlayout_viewpager)
     ViewPager mViewPager;
-    @BindView(R.id.group_icon)
-    RoundedImageView group_icon;
-    @BindView(R.id.group_name)
-    TextView group_name;
-    @BindView(R.id.group_introduce)
-    TextView group_introduce;
     @BindView(R.id.group_ll)
     LinearLayout group_ll;
     @BindView(R.id.group_tv)
     TextView group_tv;
-    @BindView(R.id.group_bg)
-    View group_bg;
     @BindView(R.id.event_ll)
     LinearLayout event_ll;
     @BindView(R.id.event_tv)
     TextView event_tv;
-    @BindView(R.id.event_bg)
-    View event_bg;
     @BindView(R.id.chat_ll)
     LinearLayout chat_ll;
     @BindView(R.id.chat_tv)
     TextView chat_tv;
-    @BindView(R.id.chat_bg)
-    View chat_bg;
     @BindView(R.id.house_ll)
     LinearLayout house_ll;
     @BindView(R.id.house_tv)
     TextView house_tv;
-    @BindView(R.id.house_bg)
-    View house_bg;
     @BindView(R.id.mine_ll)
     LinearLayout mine_ll;
     @BindView(R.id.mine_tv)
     TextView mine_tv;
-    @BindView(R.id.mine_bg)
-    View mine_bg;
     List<Fragment> fragmentList = new ArrayList<>();
     private GroupHomeAdapter mAdapter;
-    private List<View> views;
     private List<TextView> textViews;
 
     @Override
@@ -246,12 +228,6 @@ public class MainActivity2 extends ImmerseActivity {
 
     private void initDate() {
         handleUpdate();
-        views = new ArrayList<>();
-        views.add(group_bg);
-        views.add(house_bg);
-        views.add(chat_bg);
-        views.add(event_bg);
-        views.add(mine_bg);
         textViews = new ArrayList<>();
         textViews.add(group_tv);
         textViews.add(house_tv);
@@ -315,15 +291,15 @@ public class MainActivity2 extends ImmerseActivity {
 //        });
     }
 
-    @OnClick({R.id.search_iv, R.id.down_iv, R.id.group_ll, R.id.event_ll, R.id.chat_ll, R.id.house_ll, R.id.mine_ll})
+    @OnClick({R.id.group_ll, R.id.event_ll, R.id.chat_ll, R.id.house_ll, R.id.mine_ll})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.search_iv:
-                SearchActivity.start(mContext);
-                break;
-            case R.id.down_iv:
-                DownloadManagerActivity.start(mContext);
-                break;
+//            case R.id.search_iv:
+//                SearchActivity.start(mContext);
+//                break;
+//            case iv_title_down:
+//                DownloadManagerActivity.start(mContext);
+//                break;
             case R.id.group_ll:
                 clear();
                 show(0);
@@ -355,15 +331,13 @@ public class MainActivity2 extends ImmerseActivity {
     }
 
     private void clear() {
-        for (int i = 0; i < views.size(); i++) {
-            views.get(i).setVisibility(View.GONE);
+        for (int i = 0; i < textViews.size(); i++) {
             textViews.get(i).setTextColor(getResources().getColor(R.color.bg_pressed));
         }
     }
 
     private void show(int position) {
-        views.get(position).setVisibility(View.VISIBLE);
-        textViews.get(position).setTextColor(getResources().getColor(R.color.white));
+        textViews.get(position).setTextColor(getResources().getColor(R.color.text_green));
     }
 
     // 退出时间

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="bg_pressed">#e0e0e0</color>
+    <color name="default_bg">#d6d7d7</color>
     <color name="default_red">#e60012</color>
     <color name="default_gray">#686f78</color>
     <color name="colorPrimary">#3F51B5</color>

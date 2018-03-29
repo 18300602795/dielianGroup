@@ -21,6 +21,7 @@ import com.etsdk.app.huov7.model.GameBean;
 import com.etsdk.app.huov7.model.GameDownRequestBean;
 import com.etsdk.app.huov7.model.GameDownResult;
 import com.etsdk.app.huov7.ui.DownloadManagerActivity;
+import com.etsdk.app.huov7.ui.GameDetailV2Activity;
 import com.etsdk.app.huov7.ui.GiftListActivity;
 import com.etsdk.app.huov7.ui.SettingActivity;
 import com.etsdk.app.huov7.ui.WebViewActivity;
@@ -38,6 +39,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.etsdk.app.huov7.R.id.game_list_item;
+
 /**
  * Created by liu hong liang on 2016/12/6.
  */
@@ -46,7 +49,7 @@ public class NewListGameItem2 extends BaseDownView {
     private static final String TAG = NewListGameItem2.class.getSimpleName();
     @BindView(R.id.tv_game_name)
     TextView tvGameName;
-    @BindView(R.id.game_list_item)
+    @BindView(game_list_item)
     RelativeLayout gameListItem;
     @BindView(R.id.iv_game_img)
     RoundedImageView ivGameImg;
@@ -102,14 +105,20 @@ public class NewListGameItem2 extends BaseDownView {
         this.gameBean = gameBean;
         tvGameName.setText(gameBean.getGamename());
         tvOneword.setText(gameBean.getOneword());
-        L.i("333", "状态：" + TasksManager.getImpl().getStatusText(gameBean.getGameid()));
         down_tv.setText(TasksManager.getImpl().getStatusText(gameBean.getGameid()));
         Glide.with(getContext()).load(gameBean.getIcon()).placeholder(R.mipmap.icon_load).into(ivGameImg);
     }
 
-    @OnClick({R.id.tv_att, R.id.down_tv, R.id.gift_tv, R.id.share_tv})
+    @OnClick({R.id.game_list_item, R.id.tv_att, R.id.down_tv, R.id.gift_tv, R.id.share_tv})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.game_list_item:
+                if (gameBean == null) {
+                    return;
+                }
+                GameDetailV2Activity.start(getContext(), gameBean.getGameid());
+//                NewGameDetailActivity.start(getContext(),gameBean.getGameid());
+                break;
             case R.id.tv_att:
 
                 break;

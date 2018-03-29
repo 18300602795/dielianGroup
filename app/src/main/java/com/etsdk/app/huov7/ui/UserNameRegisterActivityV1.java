@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.etsdk.app.huov7.R;
+import com.etsdk.app.huov7.base.AileApplication;
 import com.etsdk.app.huov7.base.ImmerseActivity;
 import com.etsdk.app.huov7.http.AppApi;
 import com.etsdk.app.huov7.model.LoginResultBean;
@@ -176,8 +177,6 @@ public class UserNameRegisterActivityV1 extends ImmerseActivity {
                         UserLoginInfodao.getInstance(mActivity).saveUserLoginInfo(account, password);
                     }
                     login(account, password);
-                    mActivity.finish();
-                    MainActivity.start(mActivity, 0);
                 }
             }
         };
@@ -208,7 +207,9 @@ public class UserNameRegisterActivityV1 extends ImmerseActivity {
                 if (i == 801003) {
                     register(account, password);
                 } else if (i == 0) {
-                    JMessageClient.applyJoinGroup(Long.valueOf(25680755), "", new BasicCallback() {
+                    mActivity.finish();
+                    MainActivity.start(mActivity, 0);
+                    JMessageClient.applyJoinGroup(Long.valueOf(AileApplication.groupId), "", new BasicCallback() {
                         @Override
                         public void gotResult(int i, String s) {
                             Log.i("333", "li：" + i + "  s：" + s);

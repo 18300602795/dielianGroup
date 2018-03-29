@@ -106,7 +106,7 @@ public class AileApplication extends BaseApplication {
     public static final String GROUP_NAME = "groupName";
 
     public static Context context;
-
+    public static String groupId;
     public static List<GroupInfo> mGroupInfoList = new ArrayList<>();
     public static List<UserInfo> mFriendInfoList = new ArrayList<>();
     public static List<UserInfo> mSearchGroup = new ArrayList<>();
@@ -119,6 +119,7 @@ public class AileApplication extends BaseApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        context = getApplicationContext();
         StorageUtil.init(getApplicationContext(), null);
         ScreenUtil.init(getApplicationContext());
         JMessageClient.setDebugMode(true);

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.etsdk.app.huov7.BuildConfig;
 import com.etsdk.app.huov7.R;
+import com.etsdk.app.huov7.base.AileApplication;
 import com.etsdk.app.huov7.base.ImmerseActivity;
 import com.etsdk.app.huov7.http.AppApi;
 import com.etsdk.app.huov7.model.LoginRequestBean;
@@ -186,9 +187,6 @@ public class LoginActivityV1 extends ImmerseActivity implements PlatformActionLi
                             UserLoginInfodao.getInstance(mActivity).saveUserLoginInfo(account, "");
                         }
                     }
-                    finish();
-                    EventBus.getDefault().post(true);
-                    EventBus.getDefault().post(new ShowMsg(true));
 //                    MainActivity.start(mActivity, 4);
                 }
             }
@@ -220,7 +218,10 @@ public class LoginActivityV1 extends ImmerseActivity implements PlatformActionLi
                 if (i == 801003) {
                     register(account, password);
                 }else if (i == 0){
-                    JMessageClient.applyJoinGroup(Long.valueOf(25680755), "", new BasicCallback() {
+                    finish();
+                    EventBus.getDefault().post(true);
+                    EventBus.getDefault().post(new ShowMsg(true));
+                    JMessageClient.applyJoinGroup(Long.valueOf(AileApplication.groupId), "", new BasicCallback() {
                         @Override
                         public void gotResult(int i, String s) {
                             Log.i("333", "li：" + i + "  s：" + s);

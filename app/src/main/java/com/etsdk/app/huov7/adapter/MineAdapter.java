@@ -15,6 +15,7 @@ import com.etsdk.app.huov7.R;
 import com.etsdk.app.huov7.model.StartupResultBean;
 import com.etsdk.app.huov7.model.UserInfoResultBean;
 import com.etsdk.app.huov7.ui.AccountManageActivity;
+import com.etsdk.app.huov7.ui.ArticleActivity;
 import com.etsdk.app.huov7.ui.DownloadManagerActivity;
 import com.etsdk.app.huov7.ui.LoginActivity;
 import com.etsdk.app.huov7.ui.MineGiftCouponListActivityNew;
@@ -100,7 +101,7 @@ public class MineAdapter extends RecyclerView.Adapter<MineAdapter.MineViewHolder
         holder.post_ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                ArticleActivity.start(context);
             }
         });
 

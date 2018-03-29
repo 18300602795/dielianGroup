@@ -93,6 +93,11 @@ public class StringUtils {
                 cont = "未知消息";
             }
         }
-        return message.getFromUser().getUserName() + "：" + cont;
+        if (StringUtils.isEmpty(message.getFromUser().getNickname())) {
+            return message.getFromUser().getUserName() + "：" + cont;
+        } else {
+            return message.getFromUser().getNickname() + "：" + cont;
+        }
+
     }
 }

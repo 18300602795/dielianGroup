@@ -20,10 +20,10 @@ import com.etsdk.app.huov7.util.StringUtils;
 
 
 public class StickyNavLayout extends LinearLayout implements NestedScrollingParent {
-    private StickyCallBack stickyCallBack;
+    private StickyCallBack homeCallback;
 
-    public void setStickyCallBack(StickyCallBack stickyCallBack) {
-        this.stickyCallBack = stickyCallBack;
+    public void setStickyCallBack(StickyCallBack homeCallback) {
+        this.homeCallback = homeCallback;
     }
 
     @Override
@@ -50,8 +50,8 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
         boolean showTop = dy < 0 && getScrollY() >= 0 && !ViewCompat.canScrollVertically(target, -1);
 
         if (hiddenTop || showTop) {
-            if (stickyCallBack != null)
-                stickyCallBack.move(scrollY);
+            if (homeCallback != null)
+                homeCallback.move(scrollY);
             scrollBy(0, dy);
             consumed[1] = dy;
         }
@@ -70,11 +70,11 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
             final int childAdapterPosition = recyclerView.getChildAdapterPosition(firstChild);
             consumed = childAdapterPosition > TOP_CHILD_FLING_THRESHOLD;
         }
-        if (!consumed) {
-            animateScroll(velocityY, computeDuration(0),consumed);
-        } else {
-            animateScroll(velocityY, computeDuration(velocityY),consumed);
-        }
+//        if (!consumed) {
+//            animateScroll(velocityY, computeDuration(0),consumed);
+//        } else {
+//            animateScroll(velocityY, computeDuration(velocityY),consumed);
+//        }
         return true;
     }
 
@@ -272,7 +272,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mTopViewHeight = mTop.getMeasuredHeight() - StringUtils.dip2px(getContext(), 100);
+        mTopViewHeight = mTop.getMeasuredHeight() - StringUtils.dip2px(getContext(), 60);
     }
 
 
@@ -305,6 +305,5 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
     public interface StickyCallBack {
         void move(int dy);
     }
-
 
 }

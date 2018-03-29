@@ -15,14 +15,6 @@ import me.drakeet.multitype.ItemViewProvider;
  */
 public class GameItemViewProvider2
         extends ItemViewProvider<GameBean, GameItemViewProvider2.ViewHolder> {
-    boolean showRank;
-
-    public GameItemViewProvider2(boolean showRank) {
-        this.showRank = showRank;
-    }
-
-    public GameItemViewProvider2() {
-    }
 
     @NonNull
     @Override
@@ -38,9 +30,10 @@ public class GameItemViewProvider2
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         NewListGameItem2 listGameItem;
+
         ViewHolder(NewListGameItem2 itemView) {
             super(itemView);
-            listGameItem=itemView;
+            listGameItem = itemView;
         }
     }
 }

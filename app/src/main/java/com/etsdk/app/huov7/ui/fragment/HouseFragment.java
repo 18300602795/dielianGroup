@@ -80,7 +80,7 @@ public class HouseFragment extends AutoLazyFragment implements AdvRefreshListene
         NetRequest.request(this).setParams(httpParams).post(AppApi.getUrl(AppApi.postListApi), new HttpJsonCallBackDialog<ArticleList>() {
             @Override
             public void onDataSuccess(ArticleList data) {
-                L.e("333", "data：" + data);
+                L.e("333", "data：" + data.getData().size());
                 if (data != null && data.getData() != null) {
                     Items resultItems = new Items();
                     resultItems.addAll(data.getData());

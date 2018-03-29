@@ -84,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:singleLine="true"
-                    android:text="你觉得这个游戏里最没用的东西是什么？1.防毒面具2.闪光弹3.2倍镜4.消音器5.队友6.其他"
+                    android:text=""
                     android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>

@@ -3,7 +3,6 @@ package com.etsdk.app.huov7.provider;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.etsdk.app.huov7.model.GuildHeader;
@@ -25,14 +24,15 @@ public class GuildHeaderViewProvider
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull ViewHolder holder, @NonNull GuildHeader splitLine) {
-
+    protected void onBindViewHolder(@NonNull ViewHolder holder, @NonNull GuildHeader guildHeader) {
+        holder.headerView.setGuildHeader(guildHeader);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-
-        ViewHolder(View itemView) {
+        GuildHeaderView headerView;
+        ViewHolder(GuildHeaderView itemView) {
             super(itemView);
+            headerView = itemView;
         }
     }
 }

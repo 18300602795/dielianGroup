@@ -21,10 +21,11 @@
             app:riv_corner_radius="100dp" />
 
         <TextView
+            android:id="@+id/master_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="小袁"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="12sp" />
 
@@ -78,81 +79,12 @@
             android:background="@color/aile_line_gray" />
 
         <LinearLayout
+            android:id="@+id/member_icons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="10dp">
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
-
-            <com.liang530.views.imageview.roundedimageview.RoundedImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/bg_game"
-                app:riv_corner_radius="100dp" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
-
-            <com.liang530.views.imageview.roundedimageview.RoundedImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/bg_game"
-                app:riv_corner_radius="100dp" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
-
-            <com.liang530.views.imageview.roundedimageview.RoundedImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/bg_game"
-                app:riv_corner_radius="100dp" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
-
-            <com.liang530.views.imageview.roundedimageview.RoundedImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/bg_game"
-                app:riv_corner_radius="100dp" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
-
-            <com.liang530.views.imageview.roundedimageview.RoundedImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/bg_game"
-                app:riv_corner_radius="100dp" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
-
-            <com.liang530.views.imageview.roundedimageview.RoundedImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@mipmap/member_more"
-                app:riv_corner_radius="100dp" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
         </LinearLayout>
     </LinearLayout>
 
@@ -223,9 +155,10 @@
             android:padding="10dp">
 
             <TextView
+                android:id="@+id/notice_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/notice_desc"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="12sp" />
         </LinearLayout>

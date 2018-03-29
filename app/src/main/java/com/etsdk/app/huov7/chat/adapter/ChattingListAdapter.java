@@ -592,8 +592,8 @@ public class ChattingListAdapter extends BaseAdapter {
                         } else {
 //                            intent.setClass(mContext, GroupNotFriendActivity.class);
                         }
-                        ((Activity) mContext).startActivityForResult(intent,
-                                AileApplication.REQUEST_CODE_FRIEND_INFO);
+//                        ((Activity) mContext).startActivityForResult(intent,
+//                                AileApplication.REQUEST_CODE_FRIEND_INFO);
                     }
                 }
             });

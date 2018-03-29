@@ -99,7 +99,7 @@ public class SimpleCommonUtils {
 
 //        addWechatPageSetEntity(pageSetAdapter, context, emoticonClickListener);
 
-        addGoodGoodStudyPageSetEntity(pageSetAdapter, context, emoticonClickListener);
+//        addGoodGoodStudyPageSetEntity(pageSetAdapter, context, emoticonClickListener);
 
         addKaomojiPageSetEntity(pageSetAdapter, context, emoticonClickListener);
 

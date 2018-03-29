@@ -55,7 +55,9 @@ import com.etsdk.app.huov7.chat.view.DropDownListView;
 import com.etsdk.app.huov7.chat.view.SimpleAppsGridView;
 import com.etsdk.app.huov7.chat.view.TipItem;
 import com.etsdk.app.huov7.chat.view.TipView;
+import com.etsdk.app.huov7.ui.MemberListActivity;
 import com.game.sdk.log.L;
+import com.jude.swipbackhelper.SwipeBackHelper;
 import com.liang530.log.T;
 import com.sj.emoji.EmojiBean;
 
@@ -117,7 +119,6 @@ public class ChatActivity extends ImmerseActivity implements FuncLayout.OnFuncKe
     private Conversation mConv;
     private String mTargetId;
     private String mTargetAppKey;
-    private Activity mContext;
     private ChattingListAdapter mChatAdapter;
     int maxImgCount = 9;
     private List<UserInfo> mAtList;
@@ -146,7 +147,7 @@ public class ChatActivity extends ImmerseActivity implements FuncLayout.OnFuncKe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = this;
+        SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(false);
         setContentView(R.layout.activity_chat);
         JMessageClient.registerEventReceiver(this);
         mChatView = (ChatView) findViewById(R.id.chat_view);
@@ -178,7 +179,7 @@ public class ChatActivity extends ImmerseActivity implements FuncLayout.OnFuncKe
             if (mConv == null) {
                 mConv = Conversation.createSingleConversation(mTargetId, mTargetAppKey);
             }
-            mChatAdapter = new ChattingListAdapter(mContext, mConv, longClickListener);
+            mChatAdapter = new ChattingListAdapter((Activity) mContext, mConv, longClickListener);
         } else {
             //群聊
             mIsSingle = false;
@@ -187,7 +188,7 @@ public class ChatActivity extends ImmerseActivity implements FuncLayout.OnFuncKe
             if (fromGroup) {
                 mChatView.setChatTitle(mTitle, intent.getIntExtra(MEMBERS_COUNT, 0));
                 mConv = JMessageClient.getGroupConversation(mGroupId);
-                mChatAdapter = new ChattingListAdapter(mContext, mConv, longClickListener);//长按聊天内容监听
+                mChatAdapter = new ChattingListAdapter((Activity) mContext, mConv, longClickListener);//长按聊天内容监听
             } else {
                 mAtMsgId = intent.getIntExtra("atMsgId", -1);
                 mAtAllMsgId = intent.getIntExtra("atAllMsgId", -1);
@@ -230,9 +231,9 @@ public class ChatActivity extends ImmerseActivity implements FuncLayout.OnFuncKe
                     if (mAtMsgId + 8 <= mConv.getLatestMessage().getId()) {
                         mChatView.showAtMeButton();
                     }
-                    mChatAdapter = new ChattingListAdapter(mContext, mConv, longClickListener, mAtMsgId);
+                    mChatAdapter = new ChattingListAdapter((Activity) mContext, mConv, longClickListener, mAtMsgId);
                 } else {
-                    mChatAdapter = new ChattingListAdapter(mContext, mConv, longClickListener);
+                    mChatAdapter = new ChattingListAdapter((Activity) mContext, mConv, longClickListener);
                 }
 
             }
@@ -370,7 +371,8 @@ public class ChatActivity extends ImmerseActivity implements FuncLayout.OnFuncKe
                 returnBtn();
                 break;
             case R.id.jmui_right_btn:
-                startChatDetailActivity(mTargetId, mTargetAppKey, mGroupId);
+//                startChatDetailActivity(mTargetId, mTargetAppKey, mGroupId);
+                MemberListActivity.start(mContext);
                 break;
             case R.id.jmui_at_me_btn:
                 if (mUnreadMsgCnt < ChattingListAdapter.PAGE_MESSAGE_COUNT) {

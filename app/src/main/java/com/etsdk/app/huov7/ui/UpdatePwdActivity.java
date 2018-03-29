@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.api.BasicCallback;
 
 public class UpdatePwdActivity extends ImmerseActivity {
 
@@ -95,7 +97,14 @@ public class UpdatePwdActivity extends ImmerseActivity {
             @Override
             public void onDataSuccess(RegisterResultBean data) {
                 T.s(mContext,"修改成功");
-                finish();
+                JMessageClient.updateUserPassword(oldPassword, password, new BasicCallback() {
+                    @Override
+                    public void gotResult(int i, String s) {
+                        if (i == 0){
+                            finish();
+                        }
+                    }
+                });
             }
         };
         httpCallbackDecode.setShowTs(true);

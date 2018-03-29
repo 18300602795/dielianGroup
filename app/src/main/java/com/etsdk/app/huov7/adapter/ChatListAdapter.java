@@ -58,54 +58,58 @@ public class ChatListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ChatViewHolder) {
-            final Conversation conversation = conversations.get(position);
-            Message message = conversation.getLatestMessage();
-            ((ChatViewHolder) holder).name_tv.setText(message.getFromUser().getUserName());
-            ((ChatViewHolder) holder).time_tv.setText(TimeUtils.getTime(message.getCreateTime() / 1000));
-            String cont = "";
-            switch (message.getContentType()) {
-                case file:
-                    cont = "文件消息";
-                    break;
-                case image:
-                    cont = "图片消息";
-                    break;
-                case location:
-                    cont = "位置消息";
-                    break;
-                case text:
-                    TextContent textContent = (TextContent) message.getContent();
-                    cont = textContent.getText();
-                    break;
-                case video:
-                    cont = "视频消息";
-                    break;
-                case voice:
-                    cont = "语音消息";
-                    break;
-                default: {
-                    cont = "未知消息";
-                }
-            }
-            ((ChatViewHolder) holder).count_tv.setText(message.getFromUser().getUserName() + "：" + cont);
-            ((ChatViewHolder) holder).item_ll.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(context, ChatActivity.class);
-                    switch (conversation.getType()) {
-                        case group:
-                            L.i("333", "groupId：" + ((GroupInfo) conversation.getTargetInfo()).getGroupID());
-                            intent.putExtra(AileApplication.GROUP_ID, ((GroupInfo) conversation.getTargetInfo()).getGroupID());
-                            intent.putExtra(AileApplication.CONV_TITLE, conversation.getTitle());
-                            break;
-                        case single:
-                            intent.putExtra(AileApplication.TARGET_ID, conversation.getTargetId());
-                            intent.putExtra(AileApplication.CONV_TITLE, conversation.getTitle());
-                            break;
+            try {
+                final Conversation conversation = conversations.get(position);
+                Message message = conversation.getLatestMessage();
+                ((ChatViewHolder) holder).name_tv.setText(message.getFromUser().getUserName());
+                ((ChatViewHolder) holder).time_tv.setText(TimeUtils.getTime(message.getCreateTime() / 1000));
+                String cont = "";
+                switch (message.getContentType()) {
+                    case file:
+                        cont = "文件消息";
+                        break;
+                    case image:
+                        cont = "图片消息";
+                        break;
+                    case location:
+                        cont = "位置消息";
+                        break;
+                    case text:
+                        TextContent textContent = (TextContent) message.getContent();
+                        cont = textContent.getText();
+                        break;
+                    case video:
+                        cont = "视频消息";
+                        break;
+                    case voice:
+                        cont = "语音消息";
+                        break;
+                    default: {
+                        cont = "未知消息";
                     }
-                    context.startActivity(intent);
                 }
-            });
+                ((ChatViewHolder) holder).count_tv.setText(message.getFromUser().getUserName() + "：" + cont);
+                ((ChatViewHolder) holder).item_ll.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(context, ChatActivity.class);
+                        switch (conversation.getType()) {
+                            case group:
+                                L.i("333", "groupId：" + ((GroupInfo) conversation.getTargetInfo()).getGroupID());
+                                intent.putExtra(AileApplication.GROUP_ID, ((GroupInfo) conversation.getTargetInfo()).getGroupID());
+                                intent.putExtra(AileApplication.CONV_TITLE, conversation.getTitle());
+                                break;
+                            case single:
+                                intent.putExtra(AileApplication.TARGET_ID, conversation.getTargetId());
+                                intent.putExtra(AileApplication.CONV_TITLE, conversation.getTitle());
+                                break;
+                        }
+                        context.startActivity(intent);
+                    }
+                });
+            }catch (Exception e){
+
+            }
         }
 
     }

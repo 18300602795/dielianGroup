@@ -418,6 +418,24 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
+        <!--成员列表 !-->
+        <activity
+            android:name=".ui.MemberListActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <!--个人信息 !-->
+        <activity
+            android:name=".ui.OtherInfoActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <!--我的帖子 !-->
+        <activity
+            android:name=".ui.ArticleActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name="com.etsdk.app.huov7.ui.ForgetPwdActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

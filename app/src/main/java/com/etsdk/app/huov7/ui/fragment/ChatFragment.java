@@ -22,6 +22,7 @@ import com.game.sdk.http.HttpNoLoginCallbackDecode;
 import com.game.sdk.http.HttpParamsBuild;
 import com.game.sdk.util.GsonUtil;
 import com.kymjs.rxvolley.RxVolley;
+import com.liang530.log.L;
 import com.liang530.views.imageview.roundedimageview.RoundedImageView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -78,7 +79,7 @@ public class ChatFragment extends AutoLazyFragment {
         HttpNoLoginCallbackDecode httpCallbackDecode = new HttpNoLoginCallbackDecode<UserInfoResultBean>(getActivity(), httpParamsBuild.getAuthkey()) {
             @Override
             public void onDataSuccess(UserInfoResultBean data) {
-                if (data != null) {
+                if (data != null && JMessageClient.getMyInfo() != null) {
                     initDate();
                 } else {
                     login_ll.setVisibility(View.VISIBLE);
@@ -94,14 +95,14 @@ public class ChatFragment extends AutoLazyFragment {
         httpCallbackDecode.setShowTs(true);
         httpCallbackDecode.setLoadingCancel(false);
         httpCallbackDecode.setShowLoading(false);
-        RxVolley.post(AppApi.getUrl(AppApi.userDetailApi), httpParamsBuild.getHttpParams(), httpCallbackDecode);
+        RxVolley.post(AppApi.getUrl(AppApi.userDetailApi2), httpParamsBuild.getHttpParams(), httpCallbackDecode);
     }
 
     private void initDate() {
         login_ll.setVisibility(View.GONE);
         group_ll.setVisibility(View.VISIBLE);
         chat_ll.setVisibility(View.VISIBLE);
-        Conversation conversation = JMessageClient.getGroupConversation(25680755);
+        Conversation conversation = JMessageClient.getGroupConversation(Long.valueOf(AileApplication.groupId));
         Message message = conversation.getLatestMessage();
         time_tv.setText(TimeUtils.getTime(message.getCreateTime() / 1000));
         count_tv.setText(StringUtils.getCont(message));
@@ -112,7 +113,8 @@ public class ChatFragment extends AutoLazyFragment {
         switch (view.getId()) {
             case R.id.group_ll:
                 Intent intent = new Intent(getActivity(), ChatActivity.class);
-                intent.putExtra(AileApplication.GROUP_ID, Long.valueOf(25680755));
+                L.i("333", "group:" + AileApplication.groupId);
+                intent.putExtra(AileApplication.GROUP_ID, Long.valueOf(AileApplication.groupId));
                 intent.putExtra(AileApplication.CONV_TITLE, "蝶恋公会");
                 startActivity(intent);
                 break;

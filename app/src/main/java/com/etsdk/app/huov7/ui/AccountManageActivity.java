@@ -30,7 +30,6 @@ import com.game.sdk.log.L;
 import com.game.sdk.util.GsonUtil;
 import com.kymjs.rxvolley.RxVolley;
 import com.kymjs.rxvolley.client.HttpParams;
-import com.kymjs.rxvolley.http.VolleyError;
 import com.liang530.control.LoginControl;
 import com.liang530.log.T;
 import com.liang530.photopicker.beans.SelectPhotoEvent;
@@ -240,34 +239,34 @@ public class AccountManageActivity extends ImmerseActivity {
         }
     }
 
-    private void updateHeadImage(File file) {
+    private void updateHeadImage(final File file) {
         HttpParams httpParams = AppApi.getCommonHttpParams(AppApi.userHeadImgApi);
         httpParams.put("portrait", file);
         //成功，失败，null数据
-//        NetRequest.request(this).setParams(httpParams).post(AppApi.getUrl(AppApi.userHeadImgApi), new HttpJsonCallBackDialog<AddressList>() {
+        NetRequest.request(this).setParams(httpParams).post(AppApi.getUrl(AppApi.userHeadImgApi), new HttpJsonCallBackDialog<AddressList>() {
+            @Override
+            public void onDataSuccess(AddressList data) {
+                T.s(mContext, "上传成功");
+                JMessageClient.updateUserAvatar(file, new BasicCallback() {
+                    @Override
+                    public void gotResult(int i, String s) {
+                        L.i("333", "修改头像：i" + i + "  s:" + s);
+                    }
+                });
+            }
+        });
+//        NetRequest.request(this).setParams(httpParams).post("https://api.idielian.com/api/v7/bbs/list", new HttpJsonCallBackDialog<AddressList>() {
 //            @Override
 //            public void onDataSuccess(AddressList data) {
 //                T.s(mContext, "上传成功");
 //            }
+//
+//            @Override
+//            public void onFailure(VolleyError error) {
+//                super.onFailure(error);
+//                T.s(mContext, "上传失败：" + error.toString());
+//            }
 //        });
-        JMessageClient.updateUserAvatar(file, new BasicCallback() {
-            @Override
-            public void gotResult(int i, String s) {
-                L.i("333", "修改头像：i" + i + "  s:" + s);
-            }
-        });
-        NetRequest.request(this).setParams(httpParams).post("https://api.idielian.com/api/v7/bbs/list", new HttpJsonCallBackDialog<AddressList>() {
-            @Override
-            public void onDataSuccess(AddressList data) {
-                T.s(mContext, "上传成功");
-            }
-
-            @Override
-            public void onFailure(VolleyError error) {
-                super.onFailure(error);
-                T.s(mContext, "上传失败：" + error.toString());
-            }
-        });
     }
 
 
